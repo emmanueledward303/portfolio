@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import styles from './Footer.module.css';
 
 const CONTACT_LINKS = [
@@ -41,7 +42,33 @@ export default function Footer() {
         <p className={styles.legal}>
           &copy; {new Date().getFullYear()} Edward Emmanuel. All rights reserved.
         </p>
-        <a href="/privacy" className={styles.privacyLink}>Privacy Policy</a>
+        <div className={styles.legalRight}>
+          <Link href="/privacy" className={styles.privacyLink}>Privacy Policy</Link>
+          <span className={styles.legalDivider} aria-hidden="true">•</span>
+          <Link
+            href="/admin"
+            className={styles.adminLockLink}
+            title="Admin Portal (Owner Only)"
+            aria-label="Admin Portal"
+          >
+            <svg
+              className={styles.lockIcon}
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <span>Admin</span>
+          </Link>
+        </div>
       </div>
     </footer>
   );
