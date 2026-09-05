@@ -167,8 +167,20 @@ const defaultTechCategories: TechCategory[] = [
   },
 ];
 
+export interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  date: string;
+  read_time: string;
+  slug: string;
+  created_at?: string;
+}
+
 const DATA_DIR = path.join(process.cwd(), 'data');
 const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json');
+const BLOG_FILE = path.join(DATA_DIR, 'blog_posts.json');
 
 function ensureDataDir() {
   try {
@@ -374,4 +386,106 @@ export async function getResumeMeta(): Promise<ResumeMeta> {
 export async function setRuntimeResumeMeta(meta: ResumeMeta): Promise<ResumeMeta> {
   runtimeResumeMeta = meta;
   return runtimeResumeMeta;
+}
+
+// ---------------------------------------------------------------------------
+// Blog Posts (file-backed, same pattern as projects)
+// ---------------------------------------------------------------------------
+
+const defaultBlogPosts: BlogPost[] = [
+  {
+    id: 'post-1',
+    title: 'Bridging Data Analytics with Scalable Web Systems',
+    excerpt:
+      'How treating data pipelines with software engineering rigor leads to more reliable business intelligence and faster decision-making.',
+    content: `In modern tech teams, data analysis and software engineering often live in separate silos. Analysts work in SQL notebooks, while software engineers build production APIs and UIs.\n\nHowever, the real magic happens when data pipelines are treated with the exact same engineering standards: version-controlled schemas, automated validations, and clear API boundaries.\n\nBy designing responsive frontend dashboards connected directly to well-modeled data systems, we eliminate guesswork and give stakeholders confidence in every metric they see.`,
+    date: 'August 2024',
+    read_time: '4 min read',
+    slug: 'bridging-data-analytics-with-scalable-web-systems',
+    created_at: new Date('2024-08-01').toISOString(),
+  },
+];
+
+function readBlogPostsFromFile(): BlogPost[] {
+  try {
+    ensureDataDir();
+    if (fs.existsSync(BLOG_FILE)) {
+      const raw = fs.readFileSync(BLOG_FILE, 'utf-8');
+      if (raw.trim()) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } else {
+      // First-time setup: seed default post
+      writeBlogPostsToFile(defaultBlogPosts);
+      return [...defaultBlogPosts];
+    }
+  } catch (err) {
+    console.error('readBlogPostsFromFile error:', err);
+  }
+  return [...defaultBlogPosts];
+}
+
+function writeBlogPostsToFile(posts: BlogPost[]) {
+  try {
+    ensureDataDir();
+    fs.writeFileSync(BLOG_FILE, JSON.stringify(posts, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('writeBlogPostsToFile error:', err);
+  }
+}
+
+export async function getBlogPosts(): Promise<BlogPost[]> {
+  if (isSupabaseConfigured && supabase) {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.error('getBlogPosts error:', error.message);
+      return readBlogPostsFromFile();
+    }
+    return data ?? [];
+  }
+  return readBlogPostsFromFile();
+}
+
+export async function createBlogPost(
+  post: Omit<BlogPost, 'id' | 'created_at'>
+): Promise<BlogPost> {
+  if (isSupabaseConfigured && supabase) {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .insert([post])
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return data;
+  }
+  const posts = readBlogPostsFromFile();
+  const newPost: BlogPost = {
+    id: `post-${Date.now()}`,
+    created_at: new Date().toISOString(),
+    ...post,
+  };
+  posts.unshift(newPost);
+  writeBlogPostsToFile(posts);
+  return newPost;
+}
+
+export async function deleteBlogPost(id: string): Promise<{ success: boolean; error?: string }> {
+  if (!id) return { success: false, error: 'Post ID is required' };
+
+  if (isSupabaseConfigured && supabase) {
+    const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+    if (error) return { success: false, error: error.message };
+    return { success: true };
+  }
+
+  const posts = readBlogPostsFromFile();
+  const idx = posts.findIndex((p) => p.id === id);
+  if (idx === -1) return { success: false, error: `Post not found with ID "${id}"` };
+  posts.splice(idx, 1);
+  writeBlogPostsToFile(posts);
+  return { success: true };
 }

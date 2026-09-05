@@ -1,0 +1,12 @@
+[
+  {
+    "id": "post-1",
+    "title": "Bridging Data Analytics with Scalable Web Systems",
+    "excerpt": "How treating data pipelines with software engineering rigor leads to more reliable business intelligence and faster decision-making.",
+    "content": "In modern tech teams, data analysis and software engineering often live in separate silos. Analysts work in SQL notebooks, while software engineers build production APIs and UIs.\n\nHowever, the real magic happens when data pipelines are treated with the exact same engineering standards: version-controlled schemas, automated validations, and clear API boundaries.\n\nBy designing responsive frontend dashboards connected directly to well-modeled data systems, we eliminate guesswork and give stakeholders confidence in every metric they see.",
+    "date": "August 2024",
+    "read_time": "4 min read",
+    "slug": "bridging-data-analytics-with-scalable-web-systems",
+    "created_at": "2024-08-01T00:00:00.000Z"
+  }
+]
