@@ -1,6 +1,0 @@
-{
-  "/api/certificates/route": "app/api/certificates/route.js",
-  "/api/resume/upload/route": "app/api/resume/upload/route.js",
-  "/api/tech-stack/route": "app/api/tech-stack/route.js",
-  "/page": "app/page.js"
-}
