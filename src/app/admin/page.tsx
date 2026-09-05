@@ -48,6 +48,7 @@ export default function AdminPage() {
   const [projectSaving, setProjectSaving] = useState(false);
   const [projectSuccessMsg, setProjectSuccessMsg] = useState<string | null>(null);
   const [projectErrorMsg, setProjectErrorMsg] = useState<string | null>(null);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
 
   // New Project Form State
   const [newProject, setNewProject] = useState({
@@ -170,8 +171,8 @@ export default function AdminPage() {
     }
   };
 
-  // Handlers: Add Project
-  const handleCreateProject = async (e: React.FormEvent) => {
+  // Handlers: Save Project (Create or Update)
+  const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProject.title.trim() || !newProject.description.trim()) {
       setProjectErrorMsg('Please provide at least a project title and description.');
@@ -184,6 +185,7 @@ export default function AdminPage() {
 
     try {
       const payload = {
+        id: editingProjectId || undefined,
         title: newProject.title,
         tagline: newProject.tagline,
         category: newProject.category,
@@ -197,18 +199,24 @@ export default function AdminPage() {
         featured: newProject.featured,
       };
 
+      const method = editingProjectId ? 'PUT' : 'POST';
       const res = await fetch('/api/projects', {
-        method: 'POST',
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to create project');
+        throw new Error(data.error || (editingProjectId ? 'Failed to update project' : 'Failed to create project'));
       }
 
-      setProjectSuccessMsg(`Project "${data.title}" successfully added to your portfolio!`);
+      setProjectSuccessMsg(
+        editingProjectId
+          ? `Project "${data.title}" successfully updated!`
+          : `Project "${data.title}" successfully added to your portfolio!`
+      );
+      setEditingProjectId(null);
       setNewProject({
         title: '',
         tagline: '',
@@ -227,6 +235,40 @@ export default function AdminPage() {
     }
   };
 
+  const handleStartEditProject = (proj: Project) => {
+    setEditingProjectId(proj.id);
+    setNewProject({
+      title: proj.title || '',
+      tagline: proj.tagline || '',
+      category: proj.category || 'Data Analytics',
+      description: proj.description || '',
+      tech_stack: Array.isArray(proj.tech_stack) ? proj.tech_stack.join(', ') : '',
+      demo_url: proj.demo_url || '',
+      github_url: proj.github_url || '',
+      featured: Boolean(proj.featured),
+    });
+    setProjectSuccessMsg(null);
+    setProjectErrorMsg(null);
+    const formEl = document.getElementById('project-form-card');
+    if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleCancelEditProject = () => {
+    setEditingProjectId(null);
+    setNewProject({
+      title: '',
+      tagline: '',
+      category: 'Data Analytics',
+      description: '',
+      tech_stack: '',
+      demo_url: '',
+      github_url: '',
+      featured: false,
+    });
+    setProjectSuccessMsg(null);
+    setProjectErrorMsg(null);
+  };
+
   // Handlers: Delete Project
   const handleDeleteProject = async (id: string, title: string) => {
     if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
@@ -239,6 +281,10 @@ export default function AdminPage() {
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || 'Failed to delete');
+      }
+
+      if (editingProjectId === id) {
+        handleCancelEditProject();
       }
 
       setProjects((prev) => prev.filter((p) => p.id !== id));
@@ -524,12 +570,32 @@ export default function AdminPage() {
           {/* TAB 1: SIDE PROJECTS */}
           {activeTab === 'projects' && (
             <div className={styles.dashboardGrid}>
-              {/* Left Column: Add Project Form */}
-              <div className={styles.sectionCard}>
-                <h2 className={styles.sectionTitle}>Publish Side Project</h2>
+              {/* Left Column: Add / Edit Project Form */}
+              <div id="project-form-card" className={styles.sectionCard}>
+                <h2 className={styles.sectionTitle}>
+                  {editingProjectId ? 'Edit Side Project' : 'Publish Side Project'}
+                </h2>
                 <p className={styles.sectionDesc}>
-                  Add an analytics dashboard, data engineering pipeline, machine learning model, or full-stack software project to your public portfolio.
+                  {editingProjectId
+                    ? 'Modify the details, technologies, or live links for this project. Updates are immediately reflected.'
+                    : 'Add an analytics dashboard, data engineering pipeline, machine learning model, or full-stack software project to your public portfolio.'}
                 </p>
+
+                {editingProjectId && (
+                  <div className={styles.editingBanner}>
+                    <span className={styles.editingBannerText}>
+                      Editing &ldquo;{newProject.title || 'Untitled Project'}&rdquo;
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleCancelEditProject}
+                      className={styles.cancelBtn}
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      Cancel Edit
+                    </button>
+                  </div>
+                )}
 
                 {projectSuccessMsg && (
                   <div className={styles.successBanner} style={{ marginBottom: '20px' }}>
@@ -543,7 +609,7 @@ export default function AdminPage() {
                   </div>
                 )}
 
-                <form onSubmit={handleCreateProject} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                <form onSubmit={handleSaveProject} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                   <div className={styles.fieldGroup}>
                     <label className={styles.fieldLabel} htmlFor="proj-title">Project Title *</label>
                     <input
@@ -652,14 +718,32 @@ export default function AdminPage() {
                     </label>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={projectSaving}
-                    className="btn btn-primary"
-                    style={{ marginTop: '8px', justifyContent: 'center' }}
-                  >
-                    {projectSaving ? 'Publishing Project...' : 'Publish Project to Portfolio'}
-                  </button>
+                  <div className={editingProjectId ? styles.formBtnRow : undefined}>
+                    <button
+                      type="submit"
+                      disabled={projectSaving}
+                      className="btn btn-primary"
+                      style={{ marginTop: editingProjectId ? 0 : '8px', justifyContent: 'center', flex: 1 }}
+                    >
+                      {projectSaving
+                        ? editingProjectId
+                          ? 'Updating Project...'
+                          : 'Publishing Project...'
+                        : editingProjectId
+                        ? 'Save & Update Project'
+                        : 'Publish Project to Portfolio'}
+                    </button>
+                    {editingProjectId && (
+                      <button
+                        type="button"
+                        onClick={handleCancelEditProject}
+                        className={styles.cancelBtn}
+                        disabled={projectSaving}
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
                 </form>
               </div>
 
@@ -685,7 +769,7 @@ export default function AdminPage() {
                 ) : (
                   <div className={styles.projectList}>
                     {projects.map((proj) => (
-                      <div key={proj.id} className={styles.projectItem}>
+                      <div key={proj.id} className={styles.projectItem} style={editingProjectId === proj.id ? { borderColor: 'var(--color-brown)', backgroundColor: 'rgba(232, 220, 166, 0.25)' } : undefined}>
                         <div className={styles.projectItemTop}>
                           <div>
                             <span className={styles.itemCategory}>
@@ -693,14 +777,24 @@ export default function AdminPage() {
                             </span>
                             <h3 className={styles.itemTitle}>{proj.title}</h3>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteProject(proj.id, proj.title)}
-                            className={styles.deleteBtn}
-                            title="Delete this project"
-                          >
-                            Delete
-                          </button>
+                          <div className={styles.itemActions}>
+                            <button
+                              type="button"
+                              onClick={() => handleStartEditProject(proj)}
+                              className={styles.editBtn}
+                              title="Edit this project"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteProject(proj.id, proj.title)}
+                              className={styles.deleteBtn}
+                              title="Delete this project"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
 
                         {proj.tagline && (

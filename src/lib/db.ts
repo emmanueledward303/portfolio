@@ -231,6 +231,33 @@ export async function deleteProject(id: string): Promise<boolean> {
   return true;
 }
 
+export async function updateProject(
+  id: string,
+  project: Partial<Omit<Project, 'id' | 'created_at'>>
+): Promise<Project | null> {
+  if (isSupabaseConfigured && supabase) {
+    const { data, error } = await supabase
+      .from('projects')
+      .update(project)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) {
+      console.error('updateProject error:', error.message);
+      throw new Error(error.message);
+    }
+    return data;
+  }
+  // In-memory fallback
+  const idx = inMemoryProjects.findIndex((p) => p.id === id);
+  if (idx === -1) return null;
+  inMemoryProjects[idx] = {
+    ...inMemoryProjects[idx],
+    ...project,
+  };
+  return inMemoryProjects[idx];
+}
+
 // ---------------------------------------------------------------------------
 // Certificates
 // ---------------------------------------------------------------------------
