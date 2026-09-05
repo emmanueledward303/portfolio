@@ -10,7 +10,7 @@ export default function Hero() {
         {/* Copy */}
         <div className={styles.copy}>
           <p className={styles.greeting}>Hello, I&apos;m</p>
-          <h1 className={styles.name}>Edward&nbsp;Emmanuel</h1>
+          <h1 className={styles.name}>Edward Emmanuel</h1>
           <p className={styles.tagline}>Aspiring Data Analyst &amp; Software Engineer</p>
           <p className={styles.intro}>
             I dig through spreadsheets and messy datasets until they tell me what's actually true,

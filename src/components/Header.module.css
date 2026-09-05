@@ -144,7 +144,21 @@
 @media (max-width: 768px) {
   .nav { display: none; }
   .hamburger { display: flex; }
-  .logoName { display: none; }
+  .logoName {
+    display: inline-block;
+    font-size: 0.95rem;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 380px) {
+  .logoName {
+    max-width: 140px;
+    font-size: 0.85rem;
+  }
 }
 
 @media (min-width: 769px) {

@@ -294,6 +294,8 @@
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding-bottom: 2px;
 }
 
 .tabRow::-webkit-scrollbar {
@@ -317,7 +319,9 @@
   margin-bottom: -2px;
   cursor: pointer;
   white-space: nowrap;
-  transition: color var(--transition-fast), border-color var(--transition-fast);
+  flex-shrink: 0;
+  touch-action: manipulation;
+  transition: color var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
 }
 
 .tabBtn:hover {
@@ -613,6 +617,14 @@
   }
 }
 
+@media (max-width: 768px) {
+  .projectList {
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+  }
+}
+
 @media (max-width: 640px) {
   .statsGrid {
     grid-template-columns: 1fr;
@@ -632,6 +644,8 @@
 
   .brand {
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .navActions {
@@ -643,17 +657,92 @@
   .navActions .btn {
     width: 100%;
     justify-content: center;
-    padding: 8px 12px;
-    font-size: 0.75rem;
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    min-height: 40px;
   }
 
   .tabRow {
-    gap: 4px;
+    gap: 6px;
     margin-bottom: 24px;
+    padding-bottom: 4px;
   }
 
   .tabBtn {
     padding: 10px 14px;
     font-size: var(--text-xs);
+  }
+}
+
+@media (max-width: 520px) {
+  .sectionCard {
+    padding: 20px 14px;
+    border-radius: var(--radius-sm);
+  }
+
+  .loginContainer {
+    padding: 24px 12px;
+  }
+
+  .loginCard {
+    padding: 28px 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .projectItem {
+    padding: 16px 14px;
+  }
+
+  .projectItemTop {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .itemActions {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+
+  .editBtn,
+  .deleteBtn {
+    flex: 1;
+    text-align: center;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+  }
+
+  .formBtnRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .formBtnRow .btn,
+  .formBtnRow .cancelBtn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    min-height: 44px;
+  }
+
+  .editingBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .editingBanner .cancelBtn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .dropzone {
+    padding: 28px 16px;
   }
 }
