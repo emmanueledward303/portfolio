@@ -108,6 +108,45 @@
   box-shadow: 0 0 0 3px rgba(75, 46, 33, 0.15);
 }
 
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.passwordInput {
+  padding-right: 48px !important;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--color-brown);
+  opacity: 0.65;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: opacity var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+}
+
+.eyeButton:hover {
+  opacity: 1;
+  color: var(--color-black);
+}
+
+.eyeButton:focus-visible {
+  outline: 2px solid var(--color-brown);
+  outline-offset: 2px;
+}
+
 .textarea {
   min-height: 110px;
   resize: vertical;
