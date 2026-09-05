@@ -30,8 +30,8 @@ export async function POST(req: Request) {
     const formattedTechStack = Array.isArray(tech_stack)
       ? tech_stack
       : typeof tech_stack === 'string'
-      ? tech_stack.split(',').map((s: string) => s.trim()).filter(Boolean)
-      : [];
+        ? tech_stack.split(',').map((s: string) => s.trim()).filter(Boolean)
+        : [];
 
     const newProject = await createProject({
       title: title.trim(),
@@ -119,8 +119,8 @@ export async function PUT(req: Request) {
     const formattedTechStack = Array.isArray(tech_stack)
       ? tech_stack
       : typeof tech_stack === 'string'
-      ? tech_stack.split(',').map((s: string) => s.trim()).filter(Boolean)
-      : [];
+        ? tech_stack.split(',').map((s: string) => s.trim()).filter(Boolean)
+        : [];
 
     const updated = await updateProject(id, {
       title: title.trim(),

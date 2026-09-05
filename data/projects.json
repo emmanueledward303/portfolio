@@ -1,56 +1,64 @@
 [
   {
-    "id": "proj-1",
-    "title": "Retail Sales & Inventory Forecasting Engine",
-    "tagline": "Predictive analytics & inventory optimization",
-    "description": "An end-to-end data analytics platform utilizing historical retail records to forecast stock requirements, identify sales trends, and minimize stockouts with automated reporting.",
+    "id": "proj-1788630374518",
+    "created_at": "2026-09-05T17:46:14.518Z",
+    "title": "Autonomous Data Analysis Agent",
+    "tagline": "Self-correcting AI agent that cleans messy datasets and generates analytical reports with zero human intervention",
+    "description": "Raw, real-world datasets are almost never clean, they arrive with inconsistent\ndate formats, missing values, duplicate records, and mixed-case or malformed\ntext, and cleaning them is typically a slow, manual, repetitive task.\n\nThis project solves that with an autonomous agent that ingests a raw CSV or\nExcel file, inspects its own schema and data quality issues, writes and\nexecutes its own Pandas cleaning code, and produces a stakeholder-ready\nMarkdown report, all without a human writing a single cleaning rule by hand.\n\nArchitecturally, it's built as an explicit LangGraph state machine rather\nthan a black-box agent framework, so every step (plan, generate code,\nexecute, self-correct, report) is auditable rather than hidden inside a\nReAct loop. The self-correction loop is the core feature: when generated\ncode throws a runtime error, the agent captures the full traceback, feeds\nit back to the model, and retries, up to a bounded limit, with zero human\nintervention.\n\nThe project was adversarially stress-tested, not just run once on a clean\nexample. That testing surfaced two real, non-obvious bugs: a silent\ndate-parsing failure where valid dates in unfamiliar formats were being\ndropped with no error raised, and a report-generation hallucination where\nthe AI described a cleaning step as successful when the underlying data\nshowed it hadn't happened. Both were diagnosed, fixed, and verified with\nbefore/after evidence. A deterministic, non-LLM verification layer was also\nadded, since a second LLM call checking a first one's work doesn't remove\nhallucination risk, it just relocates it.\n\nThe LLM client is provider-agnostic by design and was actually run against\nthree different providers (Anthropic, Google Gemini, Groq) during\ndevelopment, proving the abstraction rather than just claiming it.",
+    "category": "Data Science & ML",
+    "tech_stack": [
+      "Python",
+      "LangGraph",
+      "LangChain",
+      "Pandas",
+      "Groq API",
+      "pytest",
+      "python-dotenv"
+    ],
+    "demo_url": "",
+    "github_url": "https://github.com/emmanueledward303/autonomous-data-analysis-agent",
+    "image_url": "",
+    "featured": false
+  },
+  {
+    "id": "proj-1788630305731",
+    "created_at": "2026-09-05T17:45:05.731Z",
+    "title": "Football Recruitment Analyzer",
+    "tagline": "Data-driven analysis revealing that clubs overpay for transfers with weak correlation (r=0.303) between transfer fees and on-pitch output—with recommendations for performance-linked fee structures.",
+    "description": "This project analyzes 175,165 football transfers to answer: \"Are clubs overpaying for transfers relative to what players actually deliver on the pitch?\"\n\nKey Finding: Transfer fee and attacking output (goals + assists) have only a weak 0.303 correlation, meaning clubs pay substantial premiums that poorly predict player performance. Examples range from Erling Haaland's exceptional EUR 1.18M per goal contribution to Miralem Pjanic's zero return on a EUR 60M Barcelona transfer.\n\nSolution: Recommended performance-linked add-ons for high-fee signings instead of fully guaranteed upfront payments, backed by quantitative evidence of poor fee-to-output predictability.",
     "category": "Data Analytics",
     "tech_stack": [
       "Python",
-      "PostgreSQL",
+      "SQL Server",
       "Pandas",
-      "Next.js",
-      "FastAPI"
+      "Power BI",
+      "Google Gemini API",
+      "Transfermarkt-datasets"
     ],
-    "demo_url": "https://github.com/emmanueledward303",
-    "github_url": "https://github.com/emmanueledward303",
-    "featured": true,
-    "created_at": "2026-08-26T17:37:24.067Z"
+    "demo_url": "",
+    "github_url": "https://github.com/emmanueledward303/football-recruitment-analyzer",
+    "image_url": "",
+    "featured": false
   },
   {
-    "id": "proj-2",
-    "title": "Distributed Event & Task Management Hub",
-    "tagline": "High-throughput full-stack system",
-    "description": "A scalable task management and asynchronous notification platform built with Next.js App Router and relational storage, with role-based access control and analytics dashboards.",
+    "id": "proj-1788630240673",
+    "created_at": "2026-09-05T17:44:00.673Z",
+    "title": "Personal Portfolio Website",
+    "tagline": "portfolio built with TypeScript and modern web UI  showcases projects, skills, and contact info",
+    "description": "This repository contains my personal portfolio website that presents my projects, technical skills, and a contact entry point for potential collaborators and employers.",
     "category": "Full-Stack",
     "tech_stack": [
-      "Next.js",
       "TypeScript",
+      "CSS",
+      "PLpgSQL",
+      "JavaScript",
+      "Next.js",
       "Node.js",
-      "Supabase",
-      "TailwindCSS"
+      "PostgreSQL"
     ],
-    "demo_url": "https://github.com/emmanueledward303",
-    "github_url": "https://github.com/emmanueledward303",
-    "featured": true,
-    "created_at": "2026-08-16T17:37:24.067Z"
-  },
-  {
-    "id": "proj-3",
-    "title": "Financial Health & Expense Tracking System",
-    "tagline": "Automated data ingestion & visual analytics",
-    "description": "Clean automated pipeline that digests multi-source financial statements, normalizes categorical spending, and delivers clear interactive summaries for business decision makers.",
-    "category": "Data Engineering",
-    "tech_stack": [
-      "Python",
-      "SQL",
-      "NumPy",
-      "Docker",
-      "Chart.js"
-    ],
-    "demo_url": "https://github.com/emmanueledward303",
-    "github_url": "https://github.com/emmanueledward303",
-    "featured": false,
-    "created_at": "2026-08-06T17:38:27.806Z"
+    "demo_url": "",
+    "github_url": "https://github.com/emmanueledward303/portfolio",
+    "image_url": "",
+    "featured": false
   }
 ]
