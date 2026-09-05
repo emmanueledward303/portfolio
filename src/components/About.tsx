@@ -18,12 +18,18 @@ export default function About() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/blog')
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) setPosts(data);
-      })
-      .catch(() => {/* silently fail */ });
+    const fetchPosts = () => {
+      fetch('/api/blog')
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) setPosts(data);
+        })
+        .catch(() => {/* silently fail */ });
+    };
+
+    fetchPosts(); // initial load
+    const interval = setInterval(fetchPosts, 30_000); // re-fetch every 30 s
+    return () => clearInterval(interval);
   }, []);
 
   return (
