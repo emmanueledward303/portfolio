@@ -1,0 +1,268 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ============================================
+   DESIGN TOKENS
+   ============================================ */
+:root {
+  /* Color palette */
+  --color-paper:  #F6F4F1;
+  --color-stone:  #E4DED2;
+  --color-brown:  #704214;
+  --color-brown-hover: #5a3410;
+  --color-black:  #000000;
+  --color-white:  #ffffff;
+
+  /* Functional feedback */
+  --color-success: #2d7a4f;
+  --color-error:   #c0392b;
+  --color-warning: #d68910;
+
+  /* Typography */
+  --font-heading: 'DM Serif Display', Georgia, serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+
+  /* Type scale */
+  --text-xs:   0.75rem;   /* 12px */
+  --text-sm:   0.875rem;  /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-md:   1.125rem;  /* 18px */
+  --text-lg:   1.375rem;  /* 22px */
+  --text-xl:   1.75rem;   /* 28px */
+  --text-2xl:  2.25rem;   /* 36px */
+  --text-3xl:  3rem;      /* 48px */
+  --text-4xl:  3.75rem;   /* 60px */
+
+  /* Spacing */
+  --space-section-y:  120px;
+  --space-block-gap:  80px;
+  --space-para-gap:   40px;
+  --space-sm:         12px;
+  --space-md:         24px;
+  --space-lg:         48px;
+
+  /* Layout */
+  --container-max: 1160px;
+  --container-px:  clamp(24px, 5vw, 80px);
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--color-black);
+  background-color: var(--color-paper);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ============================================
+   ACCESSIBILITY - FOCUS STATES
+   ============================================ */
+:focus-visible {
+  outline: 2px solid var(--color-brown);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================
+   LAYOUT UTILITIES
+   ============================================ */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-px);
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  line-height: 1.15;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: var(--text-4xl); }
+h2 { font-size: var(--text-3xl); }
+h3 { font-size: var(--text-2xl); }
+h4 { font-size: var(--text-xl); }
+
+p {
+  max-width: 68ch;
+  line-height: 1.75;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast),
+              color var(--transition-fast),
+              transform var(--transition-fast),
+              box-shadow var(--transition-fast);
+  cursor: pointer;
+  border: 2px solid transparent;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background-color: var(--color-brown);
+  color: var(--color-paper);
+  border-color: var(--color-brown);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-brown-hover);
+  border-color: var(--color-brown-hover);
+  box-shadow: 0 4px 16px rgba(112, 66, 20, 0.25);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-black);
+  border-color: var(--color-black);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-black);
+  color: var(--color-paper);
+}
+
+/* ============================================
+   CARD BROWN TAB ACCENT
+   ============================================ */
+.card-tab {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-tab::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  background-color: var(--color-brown);
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+
+/* ============================================
+   SKELETON LOADERS
+   ============================================ */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-stone) 25%,
+    #d4cec3 50%,
+    var(--color-stone) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease both;
+}
+
+/* stagger helpers */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+
+/* ============================================
+   RESPONSIVE HELPERS
+   ============================================ */
+@media (max-width: 768px) {
+  :root {
+    --space-section-y: 72px;
+    --space-block-gap: 48px;
+    --space-para-gap:  28px;
+  }
+
+  h1 { font-size: clamp(2.2rem, 8vw, var(--text-4xl)); }
+  h2 { font-size: clamp(1.8rem, 6vw, var(--text-3xl)); }
+}

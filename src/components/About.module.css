@@ -1,0 +1,194 @@
+/* About section ---------------------------------------------------------- */
+.about {
+  background-color: var(--color-cream);
+  padding-block: var(--space-section-y);
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(40px, 6vw, 80px);
+  align-items: start;
+}
+
+/* Shared eyebrow label */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-brown);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* Bio column ------------------------------------------------------------ */
+.heading {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3.5vw, var(--text-3xl));
+  font-weight: 400;
+  line-height: 1.18;
+  color: var(--color-black);
+  margin-bottom: 24px;
+}
+
+.body {
+  font-size: var(--text-base);
+  color: var(--color-ink);
+  line-height: 1.8;
+  margin-bottom: 16px;
+  max-width: 52ch;
+}
+
+/* Stats row */
+.statsList {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  padding: 0;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statValue {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-brown);
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Blog posts column ----------------------------------------------------- */
+.postsCol {
+  padding-top: 4px;
+}
+
+.postsHeading {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 400;
+  color: var(--color-black);
+  margin-bottom: 28px;
+}
+
+.empty {
+  font-size: var(--text-base);
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.postList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.postCard {
+  border-top: 1px solid var(--color-stone);
+  padding-top: 20px;
+}
+
+.postMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.postDate,
+.postReadTime {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+}
+
+.postDot {
+  color: var(--color-stone);
+}
+
+.postTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: var(--color-black);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.postExcerpt {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.postContent {
+  font-size: var(--text-sm);
+  color: var(--color-ink);
+  line-height: 1.8;
+  margin-bottom: 12px;
+  border-left: 2px solid var(--color-brown);
+  padding-left: 16px;
+}
+
+.postContent p + p {
+  margin-top: 12px;
+}
+
+.readToggle {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-brown);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity var(--transition-fast);
+}
+
+.readToggle:hover {
+  opacity: 0.75;
+}
+
+/* Responsive ------------------------------------------------------------ */
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr;
+  }
+
+  .postsCol {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsList {
+    gap: 20px;
+  }
+
+  .heading {
+    font-size: clamp(1.5rem, 6vw, 1.8rem);
+  }
+
+  .body {
+    max-width: 100%;
+  }
+}

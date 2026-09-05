@@ -1,0 +1,124 @@
+.hero {
+  background-color: var(--color-paper);
+  padding-block: var(--space-section-y);
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  align-items: center;
+  gap: var(--space-block-gap);
+}
+
+/* Copy */
+.greeting {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  color: var(--color-brown);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.name {
+  font-family: var(--font-heading);
+  font-size: clamp(2.8rem, 6vw, var(--text-4xl));
+  font-weight: 400;
+  line-height: 1.08;
+  color: var(--color-black);
+  margin-bottom: 20px;
+}
+
+.tagline {
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  font-weight: 400;
+  color: #5a5550;
+  margin-bottom: var(--space-para-gap);
+  letter-spacing: 0.01em;
+}
+
+.intro {
+  font-size: var(--text-base);
+  color: #3a3530;
+  line-height: 1.8;
+  margin-bottom: var(--space-para-gap);
+  max-width: 54ch;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Portrait */
+.portrait {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.portraitAccent {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 180px;
+  height: 220px;
+  background-color: var(--color-brown);
+  border-radius: var(--radius-sm);
+  z-index: 0;
+}
+
+.portraitFrame {
+  position: relative;
+  z-index: 1;
+  width: 320px;
+  height: 380px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 3px solid var(--color-stone);
+}
+
+.portraitImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr;
+  }
+
+  .portrait {
+    order: -1;
+    justify-content: flex-start;
+  }
+
+  .portraitFrame {
+    width: 240px;
+    height: 280px;
+  }
+
+  .portraitAccent {
+    width: 140px;
+    height: 170px;
+    top: -14px;
+    right: -14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions .btn {
+    text-align: center;
+    justify-content: center;
+  }
+}
