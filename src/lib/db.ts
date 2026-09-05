@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { supabase, isSupabaseConfigured } from './supabase';
 
 // ---------------------------------------------------------------------------
@@ -165,7 +167,48 @@ const defaultTechCategories: TechCategory[] = [
   },
 ];
 
-const inMemoryProjects: Project[] = [...defaultProjects];
+const DATA_DIR = path.join(process.cwd(), 'data');
+const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json');
+
+function ensureDataDir() {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+  } catch (err) {
+    console.error('ensureDataDir error:', err);
+  }
+}
+
+function readProjectsFromFile(): Project[] {
+  try {
+    ensureDataDir();
+    if (fs.existsSync(PROJECTS_FILE)) {
+      const raw = fs.readFileSync(PROJECTS_FILE, 'utf-8');
+      if (raw.trim()) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } else {
+      // First-time setup: write default projects to file
+      writeProjectsToFile(defaultProjects);
+      return [...defaultProjects];
+    }
+  } catch (err) {
+    console.error('readProjectsFromFile error:', err);
+  }
+  return [...defaultProjects];
+}
+
+function writeProjectsToFile(projects: Project[]) {
+  try {
+    ensureDataDir();
+    fs.writeFileSync(PROJECTS_FILE, JSON.stringify(projects, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('writeProjectsToFile error:', err);
+  }
+}
+
 const inMemoryCertificates: Certificate[] = [...defaultCertificates];
 
 let runtimeResumeMeta: ResumeMeta = {
@@ -186,11 +229,11 @@ export async function getProjects(): Promise<Project[]> {
       .order('created_at', { ascending: false });
     if (error) {
       console.error('getProjects error:', error.message);
-      return inMemoryProjects;
+      return readProjectsFromFile();
     }
-    return data && data.length > 0 ? data : inMemoryProjects;
+    return data && data.length > 0 ? data : readProjectsFromFile();
   }
-  return inMemoryProjects;
+  return readProjectsFromFile();
 }
 
 export async function createProject(
@@ -205,30 +248,42 @@ export async function createProject(
     if (error) throw new Error(error.message);
     return data;
   }
-  // In-memory fallback
+  // File-backed persistent store
+  const projects = readProjectsFromFile();
   const newProject: Project = {
     id: `proj-${Date.now()}`,
     created_at: new Date().toISOString(),
     ...project,
   };
-  inMemoryProjects.unshift(newProject);
+  projects.unshift(newProject);
+  writeProjectsToFile(projects);
   return newProject;
 }
 
-export async function deleteProject(id: string): Promise<boolean> {
+export async function deleteProject(id: string): Promise<{ success: boolean; error?: string }> {
+  if (!id) {
+    return { success: false, error: 'Project ID is required' };
+  }
+
   if (isSupabaseConfigured && supabase) {
     const { error } = await supabase.from('projects').delete().eq('id', id);
     if (error) {
       console.error('deleteProject error:', error.message);
-      return false;
+      return { success: false, error: error.message };
     }
-    return true;
+    return { success: true };
   }
-  // In-memory fallback
-  const idx = inMemoryProjects.findIndex((p) => p.id === id);
-  if (idx === -1) return false;
-  inMemoryProjects.splice(idx, 1);
-  return true;
+
+  // File-backed persistent store
+  const projects = readProjectsFromFile();
+  const targetId = String(id).trim();
+  const idx = projects.findIndex((p) => String(p.id).trim() === targetId);
+  if (idx === -1) {
+    return { success: false, error: `Project not found with ID "${id}"` };
+  }
+  projects.splice(idx, 1);
+  writeProjectsToFile(projects);
+  return { success: true };
 }
 
 export async function updateProject(
@@ -248,14 +303,18 @@ export async function updateProject(
     }
     return data;
   }
-  // In-memory fallback
-  const idx = inMemoryProjects.findIndex((p) => p.id === id);
+
+  // File-backed persistent store
+  const projects = readProjectsFromFile();
+  const targetId = String(id).trim();
+  const idx = projects.findIndex((p) => String(p.id).trim() === targetId);
   if (idx === -1) return null;
-  inMemoryProjects[idx] = {
-    ...inMemoryProjects[idx],
+  projects[idx] = {
+    ...projects[idx],
     ...project,
   };
-  return inMemoryProjects[idx];
+  writeProjectsToFile(projects);
+  return projects[idx];
 }
 
 // ---------------------------------------------------------------------------

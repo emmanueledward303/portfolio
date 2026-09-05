@@ -56,25 +56,38 @@ export async function DELETE(req: Request) {
     const authorized = await isRequestAuthorized(req);
     if (!authorized) {
       return NextResponse.json(
-        { error: 'Unauthorized. You must be logged in as admin.' },
+        { error: 'Unauthorized. You must be logged into the admin dashboard to delete projects.' },
         { status: 401 }
       );
     }
 
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
+    let id = searchParams.get('id')?.trim();
 
     if (!id) {
-      return NextResponse.json({ error: 'Project ID is required' }, { status: 400 });
+      try {
+        const body = await req.json();
+        id = body?.id?.trim();
+      } catch {
+        // body wasn't JSON
+      }
     }
 
-    const success = await deleteProject(id);
-    if (!success) {
-      return NextResponse.json({ error: 'Project not found or could not be deleted' }, { status: 404 });
+    if (!id) {
+      return NextResponse.json({ error: 'Project ID is required to delete' }, { status: 400 });
+    }
+
+    const result = await deleteProject(id);
+    if (!result.success) {
+      return NextResponse.json(
+        { error: result.error || 'Project not found or could not be deleted' },
+        { status: result.error?.includes('not found') ? 404 : 500 }
+      );
     }
 
     return NextResponse.json({ success: true, message: 'Project deleted successfully' });
   } catch (err: any) {
+    console.error('DELETE /api/projects error:', err);
     return NextResponse.json({ error: err.message || 'Failed to delete project' }, { status: 500 });
   }
 }

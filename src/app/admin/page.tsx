@@ -49,6 +49,7 @@ export default function AdminPage() {
   const [projectSuccessMsg, setProjectSuccessMsg] = useState<string | null>(null);
   const [projectErrorMsg, setProjectErrorMsg] = useState<string | null>(null);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null);
 
   // New Project Form State
   const [newProject, setNewProject] = useState({
@@ -271,7 +272,14 @@ export default function AdminPage() {
 
   // Handlers: Delete Project
   const handleDeleteProject = async (id: string, title: string) => {
-    if (!confirm(`Are you sure you want to delete "${title}"?`)) return;
+    if (typeof window !== 'undefined') {
+      const confirmed = window.confirm(`Are you sure you want to delete "${title}"? This cannot be undone.`);
+      if (!confirmed) return;
+    }
+
+    setDeletingProjectId(id);
+    setProjectErrorMsg(null);
+    setProjectSuccessMsg(null);
 
     try {
       const res = await fetch(`/api/projects?id=${encodeURIComponent(id)}`, {
@@ -280,17 +288,19 @@ export default function AdminPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to delete');
+        throw new Error(data.error || 'Failed to delete project');
       }
 
       if (editingProjectId === id) {
         handleCancelEditProject();
       }
 
-      setProjects((prev) => prev.filter((p) => p.id !== id));
-      setProjectSuccessMsg(`Project "${title}" deleted.`);
+      setProjects((prev) => prev.filter((p) => String(p.id).trim() !== String(id).trim()));
+      setProjectSuccessMsg(`Project "${title}" was successfully deleted.`);
     } catch (err: any) {
-      alert(err.message || 'Failed to delete project');
+      setProjectErrorMsg(err.message || 'Failed to delete project');
+    } finally {
+      setDeletingProjectId(null);
     }
   };
 
@@ -788,11 +798,12 @@ export default function AdminPage() {
                             </button>
                             <button
                               type="button"
+                              disabled={deletingProjectId === proj.id}
                               onClick={() => handleDeleteProject(proj.id, proj.title)}
                               className={styles.deleteBtn}
                               title="Delete this project"
                             >
-                              Delete
+                              {deletingProjectId === proj.id ? 'Deleting...' : 'Delete'}
                             </button>
                           </div>
                         </div>

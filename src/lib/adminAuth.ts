@@ -35,6 +35,18 @@ export async function isRequestAuthorized(req?: Request): Promise<boolean> {
       const token = authHeader.substring(7).trim();
       if (token === expectedToken) return true;
     }
+
+    // Check direct Cookie header on Request
+    const cookieHeader = req.headers.get('cookie');
+    if (cookieHeader) {
+      const cookiesList = cookieHeader.split(';');
+      for (const item of cookiesList) {
+        const [name, ...valParts] = item.trim().split('=');
+        if (name === ADMIN_COOKIE_NAME && valParts.join('=') === expectedToken) {
+          return true;
+        }
+      }
+    }
   }
 
   // Check next/headers cookies

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "proj-1",
+    "title": "Retail Sales & Inventory Forecasting Engine",
+    "tagline": "Predictive analytics & inventory optimization",
+    "description": "An end-to-end data analytics platform utilizing historical retail records to forecast stock requirements, identify sales trends, and minimize stockouts with automated reporting.",
+    "category": "Data Analytics",
+    "tech_stack": [
+      "Python",
+      "PostgreSQL",
+      "Pandas",
+      "Next.js",
+      "FastAPI"
+    ],
+    "demo_url": "https://github.com/emmanueledward303",
+    "github_url": "https://github.com/emmanueledward303",
+    "featured": true,
+    "created_at": "2026-08-26T17:37:24.067Z"
+  },
+  {
+    "id": "proj-2",
+    "title": "Distributed Event & Task Management Hub",
+    "tagline": "High-throughput full-stack system",
+    "description": "A scalable task management and asynchronous notification platform built with Next.js App Router and relational storage, with role-based access control and analytics dashboards.",
+    "category": "Full-Stack",
+    "tech_stack": [
+      "Next.js",
+      "TypeScript",
+      "Node.js",
+      "Supabase",
+      "TailwindCSS"
+    ],
+    "demo_url": "https://github.com/emmanueledward303",
+    "github_url": "https://github.com/emmanueledward303",
+    "featured": true,
+    "created_at": "2026-08-16T17:37:24.067Z"
+  },
+  {
+    "id": "proj-3",
+    "title": "Financial Health & Expense Tracking System",
+    "tagline": "Automated data ingestion & visual analytics",
+    "description": "Clean automated pipeline that digests multi-source financial statements, normalizes categorical spending, and delivers clear interactive summaries for business decision makers.",
+    "category": "Data Engineering",
+    "tech_stack": [
+      "Python",
+      "SQL",
+      "NumPy",
+      "Docker",
+      "Chart.js"
+    ],
+    "demo_url": "https://github.com/emmanueledward303",
+    "github_url": "https://github.com/emmanueledward303",
+    "featured": false,
+    "created_at": "2026-08-06T17:38:27.806Z"
+  }
+]
