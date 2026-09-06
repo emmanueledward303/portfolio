@@ -3,122 +3,108 @@
 import React, { useEffect, useState } from 'react';
 import styles from './About.module.css';
 
-interface BlogPost {
-  id: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  date: string;
-  read_time: string;
-  slug: string;
+interface AboutFact {
+  label: string;
+  value: string;
 }
 
+interface AboutData {
+  eyebrow?: string;
+  heading: string;
+  paragraphs: string[];
+  facts: AboutFact[];
+}
+
+const DEFAULT_ABOUT: AboutData = {
+  eyebrow: 'About Me',
+  heading: 'Building at the intersection of data & code.',
+  paragraphs: [
+    "I'm Edward Emmanuel, self-taught data analyst and software engineer. I don't just clean datasets I turn them into dashboards, scoring models, and apps people open more than once.",
+    "My background spans Python data pipelines, BI tools, Excel, SQL analytics and full-stack web development with React and Next.js. I care deeply about clear communication, honest metrics, and well-crafted interfaces.",
+    "Off the keyboard, you'll find me gaming, watching movies, or lost in whatever internet rabbit hole caught me that week.",
+  ],
+  facts: [
+    { label: 'Based in', value: 'Nigeria' },
+    { label: 'Work preference', value: 'Remote & Hybrid' },
+    { label: 'To opportunities', value: 'Open' },
+  ],
+};
+
 export default function About() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [data, setData] = useState<AboutData>(DEFAULT_ABOUT);
 
   useEffect(() => {
-    const fetchPosts = () => {
-      fetch('/api/blog')
+    const fetchAbout = () => {
+      fetch('/api/about')
         .then((res) => res.json())
-        .then((data) => {
-          if (Array.isArray(data)) setPosts(data);
+        .then((resData) => {
+          if (resData && resData.heading) {
+            setData(resData);
+          }
         })
-        .catch(() => {/* silently fail */ });
+        .catch(() => {
+          /* keep default data */
+        });
     };
 
-    fetchPosts(); // initial load
-    const interval = setInterval(fetchPosts, 30_000); // re-fetch every 30 s
+    fetchAbout();
+    const interval = setInterval(fetchAbout, 30_000);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <section id="about" className={styles.about} aria-labelledby="about-heading">
       <div className={`container ${styles.inner}`}>
-        {/* Left: bio */}
-        <div className={styles.bio}>
-          <p className={styles.eyebrow}>About Me</p>
+        {/* Left column: Headings, Highlights & Quick Facts */}
+        <div className={styles.leftCol}>
+          <p className={styles.eyebrow}>{data.eyebrow || 'About Me'}</p>
           <h2 id="about-heading" className={styles.heading}>
-            Building at the intersection of data&nbsp;&amp;&nbsp;code.
+            {data.heading}
           </h2>
-          <p className={styles.body}>
-            I&apos;m Edward Emmanuel, self-taught data analyst and software engineer.
-            I don't just clean datasets I turn them into dashboards, scoring models,
-            and apps people open more than once.
-          </p>
-          <p className={styles.body}>
-            My background spans Python data pipelines, BI tools, Excel, SQL analytics and full-stack
-            web development with React and Next.js. I care deeply about clear
-            communication, honest metrics, and well-crafted interfaces.
-          </p>
-          <p className={styles.body}>
-            Off the keyboard, you'll find me gaming, watching movies,
-            or lost in whatever internet rabbit hole caught me that week.
-          </p>
 
-          <ul className={styles.statsList} aria-label="Quick facts">
-            <li className={styles.statItem}>
-              <span className={styles.statValue}>Nigeria</span>
-              <span className={styles.statLabel}>Based in</span>
-            </li>
-            <li className={styles.statItem}>
-              <span className={styles.statValue}>Remote & Hybrid</span>
-              <span className={styles.statLabel}>Work preference</span>
-            </li>
-            <li className={styles.statItem}>
-              <span className={styles.statValue}>Open</span>
-              <span className={styles.statLabel}>To opportunities</span>
-            </li>
-          </ul>
-        </div>
-
-        {/* Right: blog posts */}
-        <div className={styles.postsCol}>
-          <p className={styles.eyebrow}>Writing</p>
-          <h3 className={styles.postsHeading}>Thoughts &amp; Notes</h3>
-
-          {posts.length === 0 ? (
-            <p className={styles.empty}>No posts yet — check back soon.</p>
-          ) : (
-            <ul className={styles.postList} role="list">
-              {posts.map((post) => (
-                <li key={post.id} className={styles.postCard}>
-                  <div className={styles.postMeta}>
-                    <span className={styles.postDate}>{post.date}</span>
-                    <span className={styles.postDot} aria-hidden="true">·</span>
-                    <span className={styles.postReadTime}>{post.read_time}</span>
-                  </div>
-                  <h4 className={styles.postTitle}>{post.title}</h4>
-                  <p className={styles.postExcerpt}>{post.excerpt}</p>
-
-                  {expanded === post.id ? (
-                    <>
-                      <div className={styles.postContent}>
-                        {post.content.split('\n').map((para, i) =>
-                          para.trim() ? <p key={i}>{para}</p> : null
-                        )}
-                      </div>
-                      <button
-                        className={styles.readToggle}
-                        onClick={() => setExpanded(null)}
-                        aria-expanded="true"
-                      >
-                        Collapse ↑
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      className={styles.readToggle}
-                      onClick={() => setExpanded(post.id)}
-                      aria-expanded="false"
-                    >
-                      Read more →
-                    </button>
-                  )}
+          <div className={styles.factsContainer}>
+            <p className={styles.factsHeader}>Quick Overview</p>
+            <ul className={styles.statsList} aria-label="Key highlights">
+              {data.facts?.map((fact, index) => (
+                <li key={index} className={styles.statCard}>
+                  <span className={styles.statLabel}>{fact.label}</span>
+                  <span className={styles.statValue}>{fact.value}</span>
                 </li>
               ))}
             </ul>
-          )}
+          </div>
+
+          <div className={styles.actionRow}>
+            <a href="#projects" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '0.85rem' }}>
+              Explore Projects &rarr;
+            </a>
+            <a href="#contact" className="btn btn-outline" style={{ padding: '10px 20px', fontSize: '0.85rem' }}>
+              Get In Touch
+            </a>
+          </div>
+        </div>
+
+        {/* Right column: Bio Story & Narrative */}
+        <div className={styles.rightCol}>
+          <div className={styles.bioCard}>
+            <div className={styles.bioCardHeader}>
+              <span className={styles.cardTag}>Professional Background</span>
+            </div>
+            <div className={styles.paragraphsList}>
+              {data.paragraphs?.map((para, index) => (
+                <p key={index} className={styles.body}>
+                  {para}
+                </p>
+              ))}
+            </div>
+
+            <div className={styles.focusQuote}>
+              <div className={styles.quoteBar} />
+              <p className={styles.quoteText}>
+                &ldquo;Clean pipelines, honest metrics, and web tools crafted for real impact.&rdquo;
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>

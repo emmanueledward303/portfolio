@@ -295,7 +295,7 @@
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  padding-bottom: 2px;
+  padding-bottom: 0;
 }
 
 .tabRow::-webkit-scrollbar {
@@ -306,7 +306,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 20px;
+  padding: 12px 18px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: 700;
@@ -315,7 +315,7 @@
   color: var(--color-muted);
   background: none;
   border: none;
-  border-bottom: 3px solid transparent;
+  border-bottom: 2px solid transparent;
   margin-bottom: -2px;
   cursor: pointer;
   white-space: nowrap;
@@ -333,6 +333,92 @@
   border-bottom-color: var(--color-brown);
   background-color: rgba(232, 220, 166, 0.4);
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.tabNotificationDot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #d97706;
+}
+
+/* About Me Editor Styles */
+.paragraphItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-stone);
+  border-radius: var(--radius-sm);
+}
+
+.paragraphHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.paragraphLabel {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted);
+}
+
+.removeParaBtn {
+  background: none;
+  border: none;
+  color: #8c2417;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: background-color var(--transition-fast);
+}
+
+.removeParaBtn:hover {
+  background-color: rgba(140, 36, 23, 0.08);
+}
+
+.addParaBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-brown);
+  background-color: var(--color-cream);
+  border: 1px dashed var(--color-brown);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: all var(--transition-fast);
+}
+
+.addParaBtn:hover {
+  background-color: var(--color-brown);
+  color: var(--color-paper);
+}
+
+.factsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .factsGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* =========================================================================

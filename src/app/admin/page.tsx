@@ -40,8 +40,36 @@ export default function AdminPage() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
 
-  // Active tab: 'projects' | 'blog' | 'resume' | 'storage' | 'overview'
-  const [activeTab, setActiveTab] = useState<'projects' | 'blog' | 'resume' | 'storage' | 'overview'>('projects');
+  // Active tab: 'about' | 'projects' | 'blog' | 'resume' | 'storage' | 'overview'
+  const [activeTab, setActiveTab] = useState<'about' | 'projects' | 'blog' | 'resume' | 'storage' | 'overview'>('projects');
+
+  // About Me State
+  interface AboutFact {
+    label: string;
+    value: string;
+  }
+
+  interface AboutState {
+    eyebrow: string;
+    heading: string;
+    paragraphs: string[];
+    facts: AboutFact[];
+  }
+
+  const [aboutData, setAboutData] = useState<AboutState>({
+    eyebrow: 'About Me',
+    heading: '',
+    paragraphs: [''],
+    facts: [
+      { label: 'Based in', value: 'Nigeria' },
+      { label: 'Work preference', value: 'Remote & Hybrid' },
+      { label: 'To opportunities', value: 'Open' },
+    ],
+  });
+  const [aboutLoading, setAboutLoading] = useState(false);
+  const [aboutSaving, setAboutSaving] = useState(false);
+  const [aboutSuccessMsg, setAboutSuccessMsg] = useState<string | null>(null);
+  const [aboutErrorMsg, setAboutErrorMsg] = useState<string | null>(null);
 
   // GitHub Auto-Commit & Storage State
   interface GitHubStatus {
@@ -55,7 +83,7 @@ export default function AdminPage() {
   }
 
   const [githubStatus, setGithubStatus] = useState<GitHubStatus | null>(null);
-  const [githubLoading, setGithubLoading] = useState(false);
+  const [githubLoading, setGithubLoading] = useState(true);
   const [tokenInput, setTokenInput] = useState('');
   const [tokenSaving, setTokenSaving] = useState(false);
   const [tokenSuccessMsg, setTokenSuccessMsg] = useState<string | null>(null);
@@ -116,12 +144,35 @@ export default function AdminPage() {
   // 2. Load data when authenticated
   useEffect(() => {
     if (isAuthenticated) {
+      loadAbout();
       loadProjects();
       loadResume();
       loadBlogPosts();
       loadGitHubStatus();
     }
   }, [isAuthenticated]);
+
+  const loadAbout = () => {
+    setAboutLoading(true);
+    fetch('/api/about')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.heading) {
+          setAboutData({
+            eyebrow: data.eyebrow || 'About Me',
+            heading: data.heading || '',
+            paragraphs: Array.isArray(data.paragraphs) && data.paragraphs.length > 0 ? data.paragraphs : [''],
+            facts: Array.isArray(data.facts) && data.facts.length > 0 ? data.facts : [
+              { label: 'Based in', value: 'Nigeria' },
+              { label: 'Work preference', value: 'Remote & Hybrid' },
+              { label: 'To opportunities', value: 'Open' },
+            ],
+          });
+        }
+      })
+      .catch((err) => console.error('Error loading about data:', err))
+      .finally(() => setAboutLoading(false));
+  };
 
   const loadGitHubStatus = () => {
     setGithubLoading(true);
@@ -163,6 +214,74 @@ export default function AdminPage() {
       })
       .catch((err) => console.error('Error loading blog posts:', err))
       .finally(() => setBlogLoading(false));
+  };
+
+  // Handlers: Save About Me Profile
+  const handleSaveAbout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!aboutData.heading.trim()) {
+      setAboutErrorMsg('A headline/heading is required.');
+      return;
+    }
+    const validParagraphs = aboutData.paragraphs.map((p) => p.trim()).filter(Boolean);
+    if (validParagraphs.length === 0) {
+      setAboutErrorMsg('Please provide at least one bio paragraph.');
+      return;
+    }
+
+    setAboutSaving(true);
+    setAboutSuccessMsg(null);
+    setAboutErrorMsg(null);
+
+    try {
+      const res = await fetch('/api/about', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eyebrow: aboutData.eyebrow,
+          heading: aboutData.heading,
+          paragraphs: validParagraphs,
+          facts: aboutData.facts,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to update About Me');
+      }
+      setAboutSuccessMsg('About Me profile successfully updated and committed to your portfolio!');
+      loadAbout();
+    } catch (err: any) {
+      setAboutErrorMsg(err.message || 'Error saving About Me');
+    } finally {
+      setAboutSaving(false);
+    }
+  };
+
+  const handleParagraphChange = (index: number, val: string) => {
+    setAboutData((prev) => {
+      const next = [...prev.paragraphs];
+      next[index] = val;
+      return { ...prev, paragraphs: next };
+    });
+  };
+
+  const handleAddParagraph = () => {
+    setAboutData((prev) => ({ ...prev, paragraphs: [...prev.paragraphs, ''] }));
+  };
+
+  const handleRemoveParagraph = (index: number) => {
+    setAboutData((prev) => {
+      if (prev.paragraphs.length <= 1) return prev;
+      return { ...prev, paragraphs: prev.paragraphs.filter((_, i) => i !== index) };
+    });
+  };
+
+  const handleFactChange = (index: number, field: 'label' | 'value', val: string) => {
+    setAboutData((prev) => {
+      const next = [...prev.facts];
+      next[index] = { ...next[index], [field]: val };
+      return { ...prev, facts: next };
+    });
   };
 
   // Handlers: Login
@@ -627,37 +746,39 @@ export default function AdminPage() {
               </span>
             </div>
             <div className={styles.statCard}>
-              <span className={styles.statLabel}>Primary Contact</span>
-              <span className={styles.statValue} style={{ fontSize: '0.9rem', wordBreak: 'break-all', marginTop: '6px' }}>
-                emmanueledward303@gmail.com
+              <span className={styles.statLabel}>About Me Profile</span>
+              <span className={styles.statValue} style={{ fontSize: '1.15rem', marginTop: '4px' }}>
+                {aboutLoading ? 'Loading...' : 'Active Profile'}
               </span>
-              <span className={styles.statDesc}>Inbound form recipient</span>
+              <span className={styles.statDesc}>
+                {aboutData.paragraphs.length} paragraphs &bull; {aboutData.facts.length} facts
+              </span>
             </div>
           </div>
 
-          {/* GitHub Sync Status Banner */}
-          {!githubLoading && (
-            <div className={`${styles.syncBanner} ${githubStatus?.configured ? styles.syncBannerActive : styles.syncBannerWarning}`}>
+          {/* GitHub Sync Status Banner - only shown after status is loaded to prevent twitch/flicker */}
+          {!githubLoading && githubStatus && (
+            <div className={`${styles.syncBanner} ${githubStatus.configured ? styles.syncBannerActive : styles.syncBannerWarning}`}>
               <div className={styles.syncBannerLeft}>
                 <span
-                  className={`${styles.syncIndicatorDot} ${githubStatus?.configured ? styles.dotActive : styles.dotWarning}`}
+                  className={`${styles.syncIndicatorDot} ${githubStatus.configured ? styles.dotActive : styles.dotWarning}`}
                 />
                 <div>
                   <span className={styles.syncStatusTitle}>
-                    {githubStatus?.configured
+                    {githubStatus.configured
                       ? `GitHub Auto-Commit Active (${githubStatus.repo})`
                       : 'Persistence Not Configured'}
                   </span>
                   <span className={styles.syncStatusDesc}>
-                    {githubStatus?.configured
+                    {githubStatus.configured
                       ? `Logged in as @${githubStatus.username || 'connected'} — edits commit directly to your repository and stay permanently on the portfolio.`
                       : 'Edits will not persist on Vercel without GitHub Auto-Commit or Supabase. Set up storage in the Storage & Sync tab.'}
                   </span>
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
-                <span className={`${styles.syncBadge} ${githubStatus?.configured ? styles.syncBadgeActive : styles.syncBadgeWarning}`}>
-                  {githubStatus?.configured ? '● Live Sync' : '○ Needs Setup'}
+                <span className={`${styles.syncBadge} ${githubStatus.configured ? styles.syncBadgeActive : styles.syncBadgeWarning}`}>
+                  {githubStatus.configured ? '● Live Sync' : '○ Needs Setup'}
                 </span>
                 <button
                   type="button"
@@ -665,7 +786,7 @@ export default function AdminPage() {
                   className="btn btn-outline"
                   style={{ padding: '6px 14px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
                 >
-                  {githubStatus?.configured ? 'Manage' : 'Setup Now'}
+                  {githubStatus.configured ? 'Manage' : 'Setup Now'}
                 </button>
               </div>
             </div>
@@ -676,11 +797,11 @@ export default function AdminPage() {
             <button
               type="button"
               role="tab"
-              aria-selected={activeTab === 'projects'}
-              className={`${styles.tabBtn} ${activeTab === 'projects' ? styles.tabActive : ''}`}
-              onClick={() => setActiveTab('projects')}
+              aria-selected={activeTab === 'about'}
+              className={`${styles.tabBtn} ${activeTab === 'about' ? styles.tabActive : ''}`}
+              onClick={() => setActiveTab('about')}
             >
-              Side Projects Showcase ({projects.length})
+              About Me Profile
             </button>
             <button
               type="button"
@@ -689,7 +810,16 @@ export default function AdminPage() {
               className={`${styles.tabBtn} ${activeTab === 'blog' ? styles.tabActive : ''}`}
               onClick={() => setActiveTab('blog')}
             >
-              Thoughts &amp; Notes / Blog ({blogPosts.length})
+              Thoughts &amp; Notes ({blogPosts.length})
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'projects'}
+              className={`${styles.tabBtn} ${activeTab === 'projects' ? styles.tabActive : ''}`}
+              onClick={() => setActiveTab('projects')}
+            >
+              Side Projects ({projects.length})
             </button>
             <button
               type="button"
@@ -709,16 +839,8 @@ export default function AdminPage() {
               style={{ position: 'relative' }}
             >
               Storage &amp; Sync
-              {!githubStatus?.configured && (
-                <span style={{
-                  position: 'absolute',
-                  top: '-4px',
-                  right: '-4px',
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  backgroundColor: '#e65100',
-                }} />
+              {githubStatus && !githubStatus.configured && (
+                <span className={styles.tabNotificationDot} />
               )}
             </button>
             <button
@@ -731,6 +853,136 @@ export default function AdminPage() {
               Site Overview &amp; Setup
             </button>
           </div>
+
+          {/* TAB 0: ABOUT ME PROFILE */}
+          {activeTab === 'about' && (
+            <div style={{ maxWidth: '840px', margin: '0 auto' }}>
+              <div className={styles.sectionCard}>
+                <h2 className={styles.sectionTitle}>About Me Profile Editor</h2>
+                <p className={styles.sectionDesc}>
+                  Customize your personal story, headline, bio paragraphs, and overview metrics.
+                  When saved, changes are automatically committed to your GitHub repository and update your live portfolio.
+                </p>
+
+                {aboutSuccessMsg && (
+                  <div className={styles.successBanner} style={{ marginBottom: '20px' }}>
+                    <span>✓</span> {aboutSuccessMsg}
+                  </div>
+                )}
+
+                {aboutErrorMsg && (
+                  <div className={styles.errorBanner} style={{ marginBottom: '20px' }}>
+                    {aboutErrorMsg}
+                  </div>
+                )}
+
+                <form onSubmit={handleSaveAbout}>
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="about-eyebrow" className={styles.fieldLabel}>
+                      Section Tag / Eyebrow
+                    </label>
+                    <input
+                      id="about-eyebrow"
+                      type="text"
+                      className={styles.input}
+                      value={aboutData.eyebrow}
+                      onChange={(e) => setAboutData({ ...aboutData, eyebrow: e.target.value })}
+                      placeholder="About Me"
+                    />
+                  </div>
+
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="about-heading" className={styles.fieldLabel}>
+                      Main Headline / Punchline *
+                    </label>
+                    <input
+                      id="about-heading"
+                      type="text"
+                      className={styles.input}
+                      value={aboutData.heading}
+                      onChange={(e) => setAboutData({ ...aboutData, heading: e.target.value })}
+                      placeholder="Building at the intersection of data & code."
+                      required
+                    />
+                  </div>
+
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.fieldLabel}>
+                      Bio &amp; Narrative Paragraphs *
+                    </label>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--color-muted)', marginBottom: '12px' }}>
+                      Add paragraphs telling visitors about your background, tools, methodologies, and hobbies.
+                    </p>
+
+                    {aboutData.paragraphs.map((para, idx) => (
+                      <div key={idx} className={styles.paragraphItem}>
+                        <div className={styles.paragraphHeader}>
+                          <span className={styles.paragraphLabel}>Paragraph {idx + 1}</span>
+                          {aboutData.paragraphs.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveParagraph(idx)}
+                              className={styles.removeParaBtn}
+                            >
+                              ✕ Remove
+                            </button>
+                          )}
+                        </div>
+                        <textarea
+                          rows={3}
+                          className={styles.textarea}
+                          value={para}
+                          onChange={(e) => handleParagraphChange(idx, e.target.value)}
+                          placeholder={`Enter paragraph ${idx + 1}...`}
+                          required
+                        />
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={handleAddParagraph}
+                      className={styles.addParaBtn}
+                    >
+                      <span>+ Add Another Paragraph</span>
+                    </button>
+                  </div>
+
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.fieldLabel}>
+                      Quick Overview Highlights
+                    </label>
+                    <div className={styles.factsGrid}>
+                      {aboutData.facts.map((fact, idx) => (
+                        <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <label style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-muted)', fontWeight: 700 }}>
+                            {fact.label || `Highlight ${idx + 1}`}
+                          </label>
+                          <input
+                            type="text"
+                            className={styles.input}
+                            value={fact.value}
+                            onChange={(e) => handleFactChange(idx, 'value', e.target.value)}
+                            placeholder="e.g., Nigeria"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className={styles.formBtnRow} style={{ marginTop: '28px' }}>
+                    <button
+                      type="submit"
+                      disabled={aboutSaving}
+                      className="btn btn-primary"
+                    >
+                      {aboutSaving ? 'Saving & Committing to GitHub...' : 'Save & Commit Profile Changes'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
 
           {/* TAB 1: SIDE PROJECTS */}
           {activeTab === 'projects' && (

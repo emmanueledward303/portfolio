@@ -1,0 +1,189 @@
+/* =========================================================================
+   ThoughtsAndNotes.module.css — Dedicated Writing Section
+   Theme: Whipped Butter (#F2E6B3) & Cookie Crumble (#4B2E21)
+   ========================================================================= */
+
+.section {
+  background-color: var(--color-paper);
+  padding-block: var(--space-section-y);
+  border-bottom: 1px solid var(--color-stone);
+}
+
+.sectionHeader {
+  max-width: 680px;
+  margin-bottom: 48px;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-brown);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.heading {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 3.8vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--color-black);
+  margin-bottom: 16px;
+}
+
+.subheading {
+  font-size: 1.05rem;
+  color: var(--color-ink);
+  line-height: 1.65;
+}
+
+/* Empty State ------------------------------------------------------------- */
+.emptyState {
+  padding: 48px 24px;
+  background-color: var(--color-cream);
+  border: 1px dashed var(--color-stone);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.emptyTitle {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-black);
+  margin-bottom: 8px;
+}
+
+.emptyDesc {
+  font-size: 0.95rem;
+  color: var(--color-muted);
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+/* Posts Grid -------------------------------------------------------------- */
+.postsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: 28px;
+  align-items: start;
+}
+
+.postCard {
+  background-color: var(--color-cream);
+  border: 1px solid var(--color-stone);
+  border-radius: var(--radius-lg);
+  padding: clamp(24px, 4vw, 32px);
+  box-shadow: 0 4px 16px rgba(75, 46, 33, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.postCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(75, 46, 33, 0.1);
+  border-color: var(--color-brown);
+}
+
+.postTop {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.postMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.postDate {
+  color: var(--color-brown);
+}
+
+.postDot {
+  color: var(--color-stone);
+}
+
+.postReadTime {
+  color: var(--color-muted);
+}
+
+.postTitle {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-black);
+  line-height: 1.25;
+  margin: 0;
+}
+
+.postExcerpt {
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.cardFooter {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-stone);
+}
+
+.toggleBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-brown);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: gap var(--transition-fast), color var(--transition-fast);
+}
+
+.toggleBtn:hover {
+  color: var(--color-black);
+  gap: 10px;
+}
+
+/* Expanded Reader --------------------------------------------------------- */
+.expandedContent {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--color-stone);
+}
+
+.postFullText {
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  line-height: 1.75;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+  background-color: var(--color-paper);
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-stone);
+}
+
+.postFullText p {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .postsGrid {
+    grid-template-columns: 1fr;
+  }
+}

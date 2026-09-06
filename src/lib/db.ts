@@ -62,6 +62,18 @@ export interface BlogPost {
   created_at?: string;
 }
 
+export interface AboutFact {
+  label: string;
+  value: string;
+}
+
+export interface AboutData {
+  eyebrow?: string;
+  heading: string;
+  paragraphs: string[];
+  facts: AboutFact[];
+}
+
 // ---------------------------------------------------------------------------
 // In-Memory Runtime Cache & Seed Defaults
 // ---------------------------------------------------------------------------
@@ -786,4 +798,87 @@ export async function getResumeMeta(): Promise<ResumeMeta> {
 export async function setRuntimeResumeMeta(meta: ResumeMeta): Promise<ResumeMeta> {
   runtimeResumeMeta = meta;
   return runtimeResumeMeta;
+}
+
+// ---------------------------------------------------------------------------
+// About Me Content
+// ---------------------------------------------------------------------------
+
+const defaultAboutData: AboutData = {
+  eyebrow: 'About Me',
+  heading: 'Building at the intersection of data & code.',
+  paragraphs: [
+    "I'm Edward Emmanuel, self-taught data analyst and software engineer. I don't just clean datasets I turn them into dashboards, scoring models, and apps people open more than once.",
+    "My background spans Python data pipelines, BI tools, Excel, SQL analytics and full-stack web development with React and Next.js. I care deeply about clear communication, honest metrics, and well-crafted interfaces.",
+    "Off the keyboard, you'll find me gaming, watching movies, or lost in whatever internet rabbit hole caught me that week.",
+  ],
+  facts: [
+    { label: 'Based in', value: 'Nigeria' },
+    { label: 'Work preference', value: 'Remote & Hybrid' },
+    { label: 'To opportunities', value: 'Open' },
+  ],
+};
+
+const ABOUT_DATA_FILE = path.join(process.cwd(), 'data', 'about.json');
+let inMemoryAboutData: AboutData = defaultAboutData;
+
+export async function getAboutData(): Promise<AboutData> {
+  try {
+    if (fs.existsSync(ABOUT_DATA_FILE)) {
+      const content = fs.readFileSync(ABOUT_DATA_FILE, 'utf-8');
+      const parsed = JSON.parse(content);
+      if (parsed && parsed.heading) {
+        inMemoryAboutData = parsed;
+        return inMemoryAboutData;
+      }
+    }
+  } catch (err) {
+    console.error('Error reading about.json:', err);
+  }
+  return inMemoryAboutData;
+}
+
+export async function updateAboutData(data: Partial<AboutData>, req?: Request): Promise<AboutData> {
+  const current = await getAboutData();
+  const updated: AboutData = {
+    eyebrow: data.eyebrow || current.eyebrow || 'About Me',
+    heading: data.heading || current.heading,
+    paragraphs:
+      Array.isArray(data.paragraphs) && data.paragraphs.length > 0
+        ? data.paragraphs
+        : current.paragraphs,
+    facts:
+      Array.isArray(data.facts) && data.facts.length > 0
+        ? data.facts
+        : current.facts,
+  };
+
+  inMemoryAboutData = updated;
+
+  // 1. Local filesystem write
+  try {
+    const dir = path.dirname(ABOUT_DATA_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(ABOUT_DATA_FILE, JSON.stringify(updated, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('Could not write to local about.json (serverless filesystem):', err);
+  }
+
+  // 2. Commit to GitHub if token available
+  const githubToken = await resolveGitHubToken(req);
+  if (githubToken) {
+    try {
+      await commitFileToGitHub(
+        'data/about.json',
+        JSON.stringify(updated, null, 2),
+        'update: about me profile content',
+        githubToken
+      );
+      console.log('Successfully committed updated data/about.json to GitHub');
+    } catch (err) {
+      console.error('Failed to commit about.json to GitHub:', err);
+    }
+  }
+
+  return updated;
 }

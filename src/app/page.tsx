@@ -1,6 +1,7 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
+import ThoughtsAndNotes from '@/components/ThoughtsAndNotes';
 import Projects from '@/components/Projects';
 import TechStack from '@/components/TechStack';
 import Resume from '@/components/Resume';
@@ -14,6 +15,7 @@ export default function Home() {
       <main id="main-content">
         <Hero />
         <About />
+        <ThoughtsAndNotes />
         <Projects />
         <TechStack />
         <Resume />

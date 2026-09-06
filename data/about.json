@@ -1,0 +1,23 @@
+{
+  "eyebrow": "About Me",
+  "heading": "Building at the intersection of data & code.",
+  "paragraphs": [
+    "I'm Edward Emmanuel, self-taught data analyst and software engineer. I don't just clean datasets I turn them into dashboards, scoring models, and apps people open more than once.",
+    "My background spans Python data pipelines, BI tools, Excel, SQL analytics and full-stack web development with React and Next.js. I care deeply about clear communication, honest metrics, and well-crafted interfaces.",
+    "Off the keyboard, you'll find me gaming, watching movies, or lost in whatever internet rabbit hole caught me that week."
+  ],
+  "facts": [
+    {
+      "label": "Based in",
+      "value": "Nigeria"
+    },
+    {
+      "label": "Work preference",
+      "value": "Remote & Hybrid"
+    },
+    {
+      "label": "To opportunities",
+      "value": "Open"
+    }
+  ]
+}
