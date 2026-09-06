@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getResumeMeta, setRuntimeResumeMeta } from '@/lib/db';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { isRequestAuthorized } from '@/lib/adminAuth';
+import { resolveGitHubToken, commitFileToGitHub } from '@/lib/githubSync';
 import fs from 'fs';
 import path from 'path';
 
@@ -41,6 +42,8 @@ export async function POST(req: Request) {
       year: 'numeric',
     });
 
+    const token = await resolveGitHubToken(req);
+
     // If Supabase is connected, store in Supabase Storage and DB
     if (isSupabaseConfigured && supabase) {
       const storagePath = `resumes/${Date.now()}-${fileName}`;
@@ -62,15 +65,19 @@ export async function POST(req: Request) {
       const fileUrl = publicUrlData.publicUrl;
 
       // Update resume metadata in database
-      const { data: dbData, error: dbError } = await supabase
+      const { error: dbError } = await supabase
         .from('resume_meta')
-        .insert([{ file_url: fileUrl, file_name: fileName, last_updated: now.toISOString() }])
-        .select()
-        .single();
+        .insert([{ file_url: fileUrl, file_name: fileName, last_updated: now.toISOString() }]);
 
       if (dbError) {
         return NextResponse.json({ error: dbError.message }, { status: 500 });
       }
+
+      await setRuntimeResumeMeta({
+        file_url: fileUrl,
+        file_name: fileName,
+        last_updated: formattedDate,
+      });
 
       return NextResponse.json({
         success: true,
@@ -80,10 +87,28 @@ export async function POST(req: Request) {
       });
     }
 
-    // Local fallback: write to public/resume.pdf so downloads immediately reflect new file
-    const publicDir = path.join(process.cwd(), 'public');
-    const targetPath = path.join(publicDir, 'resume.pdf');
-    await fs.promises.writeFile(targetPath, buffer);
+    // Try local write (dev / persistent environments)
+    try {
+      const publicDir = path.join(process.cwd(), 'public');
+      const targetPath = path.join(publicDir, 'resume.pdf');
+      await fs.promises.writeFile(targetPath, buffer);
+    } catch {
+      // Expected on read-only serverless lambdas (Vercel)
+    }
+
+    // If GitHub token is present, commit resume.pdf directly to GitHub repository
+    if (token) {
+      const commitRes = await commitFileToGitHub(
+        'public/resume.pdf',
+        buffer,
+        `chore(resume): update official PDF resume from admin portal`,
+        token
+      );
+
+      if (!commitRes.success) {
+        console.warn('GitHub resume commit warning:', commitRes.error);
+      }
+    }
 
     const updated = await setRuntimeResumeMeta({
       file_url: '/resume.pdf',

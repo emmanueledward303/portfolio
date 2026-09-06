@@ -40,8 +40,26 @@ export default function AdminPage() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
 
-  // Active tab: 'projects' | 'blog' | 'resume' | 'overview'
-  const [activeTab, setActiveTab] = useState<'projects' | 'blog' | 'resume' | 'overview'>('projects');
+  // Active tab: 'projects' | 'blog' | 'resume' | 'storage' | 'overview'
+  const [activeTab, setActiveTab] = useState<'projects' | 'blog' | 'resume' | 'storage' | 'overview'>('projects');
+
+  // GitHub Auto-Commit & Storage State
+  interface GitHubStatus {
+    configured: boolean;
+    source: string | null;
+    repo: string;
+    branch: string;
+    username?: string;
+    canWrite?: boolean;
+    error?: string;
+  }
+
+  const [githubStatus, setGithubStatus] = useState<GitHubStatus | null>(null);
+  const [githubLoading, setGithubLoading] = useState(false);
+  const [tokenInput, setTokenInput] = useState('');
+  const [tokenSaving, setTokenSaving] = useState(false);
+  const [tokenSuccessMsg, setTokenSuccessMsg] = useState<string | null>(null);
+  const [tokenErrorMsg, setTokenErrorMsg] = useState<string | null>(null);
 
   // Projects state
   const [projects, setProjects] = useState<Project[]>([]);
@@ -101,8 +119,20 @@ export default function AdminPage() {
       loadProjects();
       loadResume();
       loadBlogPosts();
+      loadGitHubStatus();
     }
   }, [isAuthenticated]);
+
+  const loadGitHubStatus = () => {
+    setGithubLoading(true);
+    fetch('/api/admin/github-token')
+      .then((res) => res.json())
+      .then((data) => {
+        setGithubStatus(data);
+      })
+      .catch((err) => console.error('Error checking GitHub status:', err))
+      .finally(() => setGithubLoading(false));
+  };
 
   const loadProjects = () => {
     setProjectsLoading(true);
@@ -215,8 +245,8 @@ export default function AdminPage() {
 
       setProjectSuccessMsg(
         editingProjectId
-          ? `Project "${data.title}" successfully updated!`
-          : `Project "${data.title}" successfully added to your portfolio!`
+          ? `Project "${data.title}" updated and committed to your portfolio!`
+          : `Project "${data.title}" added and committed to your live portfolio!`
       );
       setEditingProjectId(null);
       setNewProject({
@@ -409,6 +439,52 @@ export default function AdminPage() {
     }
   };
 
+  // Handlers: Save GitHub Token
+  const handleSaveGitHubToken = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!tokenInput.trim()) {
+      setTokenErrorMsg('Please enter a GitHub Personal Access Token.');
+      return;
+    }
+
+    setTokenSaving(true);
+    setTokenSuccessMsg(null);
+    setTokenErrorMsg(null);
+
+    try {
+      const res = await fetch('/api/admin/github-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: tokenInput.trim() }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to save token');
+      }
+
+      setTokenSuccessMsg(data.message || 'GitHub Auto-Commit activated! Your edits will now commit and persist permanently.');
+      setTokenInput('');
+      loadGitHubStatus();
+    } catch (err: any) {
+      setTokenErrorMsg(err.message || 'Failed to connect to GitHub');
+    } finally {
+      setTokenSaving(false);
+    }
+  };
+
+  // Handlers: Clear GitHub Token
+  const handleClearGitHubToken = async () => {
+    try {
+      await fetch('/api/admin/github-token', { method: 'DELETE' });
+      setTokenSuccessMsg(null);
+      setTokenErrorMsg(null);
+      loadGitHubStatus();
+    } catch (err) {
+      console.error('Failed to clear token:', err);
+    }
+  };
+
   // 3. Loading state during auth check
   if (isAuthenticated === null) {
     return (
@@ -559,6 +635,42 @@ export default function AdminPage() {
             </div>
           </div>
 
+          {/* GitHub Sync Status Banner */}
+          {!githubLoading && (
+            <div className={`${styles.syncBanner} ${githubStatus?.configured ? styles.syncBannerActive : styles.syncBannerWarning}`}>
+              <div className={styles.syncBannerLeft}>
+                <span
+                  className={`${styles.syncIndicatorDot} ${githubStatus?.configured ? styles.dotActive : styles.dotWarning}`}
+                />
+                <div>
+                  <span className={styles.syncStatusTitle}>
+                    {githubStatus?.configured
+                      ? `GitHub Auto-Commit Active (${githubStatus.repo})`
+                      : 'Persistence Not Configured'}
+                  </span>
+                  <span className={styles.syncStatusDesc}>
+                    {githubStatus?.configured
+                      ? `Logged in as @${githubStatus.username || 'connected'} — edits commit directly to your repository and stay permanently on the portfolio.`
+                      : 'Edits will not persist on Vercel without GitHub Auto-Commit or Supabase. Set up storage in the Storage & Sync tab.'}
+                  </span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+                <span className={`${styles.syncBadge} ${githubStatus?.configured ? styles.syncBadgeActive : styles.syncBadgeWarning}`}>
+                  {githubStatus?.configured ? '● Live Sync' : '○ Needs Setup'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('storage')}
+                  className="btn btn-outline"
+                  style={{ padding: '6px 14px', fontSize: '0.78rem', whiteSpace: 'nowrap' }}
+                >
+                  {githubStatus?.configured ? 'Manage' : 'Setup Now'}
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Navigation Tabs */}
           <div className={styles.tabRow} role="tablist">
             <button
@@ -587,6 +699,27 @@ export default function AdminPage() {
               onClick={() => setActiveTab('resume')}
             >
               Resume PDF Manager
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'storage'}
+              className={`${styles.tabBtn} ${activeTab === 'storage' ? styles.tabActive : ''}`}
+              onClick={() => setActiveTab('storage')}
+              style={{ position: 'relative' }}
+            >
+              Storage &amp; Sync
+              {!githubStatus?.configured && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-4px',
+                  right: '-4px',
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  backgroundColor: '#e65100',
+                }} />
+              )}
             </button>
             <button
               type="button"
@@ -1080,7 +1213,150 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* TAB 4: SITE OVERVIEW & CONTACT */}
+          {/* TAB 4: STORAGE & GITHUB AUTO-COMMIT */}
+          {activeTab === 'storage' && (
+            <div style={{ maxWidth: '760px', margin: '0 auto' }}>
+              <div className={styles.sectionCard}>
+                <h2 className={styles.sectionTitle}>Storage &amp; GitHub Auto-Commit</h2>
+                <p className={styles.sectionDesc}>
+                  Connect your GitHub account so that every project, blog article, or resume change you make in this admin portal
+                  is automatically committed to your repository and permanently saved. Without this setup, changes will not
+                  persist when running on Vercel.
+                </p>
+
+                {/* Current Status */}
+                <div
+                  style={{
+                    padding: '16px 20px',
+                    borderRadius: 'var(--radius-sm)',
+                    marginBottom: '24px',
+                    background: githubStatus?.configured ? '#f1f8f3' : '#fff9e6',
+                    border: `1px solid ${githubStatus?.configured ? '#b7e0c4' : '#f2dc9b'}`,
+                  }}
+                >
+                  <p style={{ fontWeight: 700, fontFamily: 'var(--font-heading)', marginBottom: '4px', color: githubStatus?.configured ? '#1b532f' : '#634300' }}>
+                    {githubStatus?.configured
+                      ? `Connected: @${githubStatus.username} has write access to ${githubStatus.repo}`
+                      : 'Not Connected: Auto-Commit is not active'}
+                  </p>
+                  <p style={{ fontSize: '0.85rem', color: githubStatus?.configured ? '#2d6a4f' : '#805000' }}>
+                    {githubStatus?.configured
+                      ? `Branch: ${githubStatus.branch} | Source: ${githubStatus.source === 'environment' ? 'Vercel Environment Variable (GITHUB_TOKEN)' : 'Session Cookie (token you entered below)'}`
+                      : 'Follow the steps below to activate GitHub Auto-Commit.'}
+                  </p>
+                  {githubStatus?.configured && (
+                    <button
+                      type="button"
+                      onClick={handleClearGitHubToken}
+                      style={{ marginTop: '10px', fontSize: '0.8rem', color: '#8c2417', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
+                    >
+                      Disconnect session token
+                    </button>
+                  )}
+                </div>
+
+                {tokenSuccessMsg && (
+                  <div className={styles.successBanner} style={{ marginBottom: '20px' }}>
+                    <span>✓</span> {tokenSuccessMsg}
+                  </div>
+                )}
+
+                {tokenErrorMsg && (
+                  <div className={styles.errorBanner} style={{ marginBottom: '20px' }}>
+                    {tokenErrorMsg}
+                  </div>
+                )}
+
+                {/* Token Input Form */}
+                <form onSubmit={handleSaveGitHubToken}>
+                  <div className={styles.fieldGroup}>
+                    <label htmlFor="github-token-input" className={styles.fieldLabel}>
+                      GitHub Personal Access Token
+                    </label>
+                    <div className={styles.tokenInputRow}>
+                      <input
+                        id="github-token-input"
+                        type="password"
+                        value={tokenInput}
+                        onChange={(e) => setTokenInput(e.target.value)}
+                        placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                        className={styles.input}
+                        style={{ flex: 1, fontFamily: 'monospace', fontSize: '0.875rem' }}
+                        autoComplete="off"
+                      />
+                      <button
+                        type="submit"
+                        disabled={tokenSaving || !tokenInput.trim()}
+                        className="btn btn-primary"
+                        style={{ whiteSpace: 'nowrap' }}
+                      >
+                        {tokenSaving ? 'Verifying...' : 'Connect'}
+                      </button>
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--color-muted)', marginTop: '6px' }}>
+                      The token is stored in a secure HTTP-only cookie in your browser session. For permanent setup across all sessions and devices, add it as a Vercel Environment Variable instead.
+                    </p>
+                  </div>
+                </form>
+
+                {/* Setup Instructions */}
+                <div className={styles.instructionsBox}>
+                  <p className={styles.instructionTitle}>How to set up GitHub Auto-Commit (3 steps)</p>
+                  <ol className={styles.stepList}>
+                    <li className={styles.stepItem}>
+                      <span className={styles.stepNumber}>1</span>
+                      <span>
+                        Go to{' '}
+                        <a
+                          href="https://github.com/settings/tokens"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: 'var(--color-brown)', fontWeight: 600 }}
+                        >
+                          github.com/settings/tokens
+                        </a>{' '}
+                        and click <strong>Generate new token (classic)</strong>. Give it a name like &ldquo;Portfolio Admin&rdquo;.
+                      </span>
+                    </li>
+                    <li className={styles.stepItem}>
+                      <span className={styles.stepNumber}>2</span>
+                      <span>
+                        Under <strong>Scopes</strong>, check <strong>repo</strong> (this gives read and write access to your repository). Scroll down and click <strong>Generate token</strong>. Copy the token — it starts with <code style={{ fontFamily: 'monospace', background: 'var(--color-stone)', padding: '1px 5px', borderRadius: '3px' }}>ghp_</code>
+                      </span>
+                    </li>
+                    <li className={styles.stepItem}>
+                      <span className={styles.stepNumber}>3</span>
+                      <span>
+                        <strong>For permanent setup on Vercel:</strong> Go to your Vercel project dashboard &rarr; Settings &rarr; Environment Variables, add <code style={{ fontFamily: 'monospace', background: 'var(--color-stone)', padding: '1px 5px', borderRadius: '3px' }}>GITHUB_TOKEN</code> with your token value, then redeploy.
+                        <br /><br />
+                        <strong>For session-only setup:</strong> Paste the token in the input above and click &ldquo;Connect&rdquo;. This works for the current browser session.
+                      </span>
+                    </li>
+                  </ol>
+                </div>
+
+                {/* Target Repository Info */}
+                <div style={{ marginTop: '20px', padding: '14px 16px', background: 'var(--color-paper)', border: '1px solid var(--color-stone)', borderRadius: 'var(--radius-sm)', fontSize: '0.875rem', color: 'var(--color-ink)' }}>
+                  <strong>Target repository:</strong>{' '}
+                  <a
+                    href="https://github.com/emmanueledward303/portfolio"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: 'var(--color-brown)', fontWeight: 600 }}
+                  >
+                    emmanueledward303/portfolio
+                  </a>{' '}
+                  &bull; Branch: <code style={{ fontFamily: 'monospace', background: 'var(--color-stone)', padding: '1px 5px', borderRadius: '3px' }}>main</code>
+                  <br />
+                  <span style={{ color: 'var(--color-muted)', fontSize: '0.825rem', marginTop: '4px', display: 'block' }}>
+                    When active, each admin save creates a real Git commit in your repository, permanently storing your data and triggering automatic Vercel redeploy.
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5: SITE OVERVIEW & CONTACT */}
           {activeTab === 'overview' && (
             <div style={{ maxWidth: '840px', margin: '0 auto' }}>
               <div className={styles.sectionCard}>

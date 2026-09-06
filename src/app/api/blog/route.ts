@@ -13,9 +13,9 @@ function generateSlug(title: string): string {
     .replace(/-+/g, '-');
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const posts = await getBlogPosts();
+    const posts = await getBlogPosts(req);
     return NextResponse.json(posts);
   } catch (err: any) {
     return NextResponse.json({ error: err.message || 'Failed to fetch posts' }, { status: 500 });
@@ -48,14 +48,17 @@ export async function POST(req: Request) {
       new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     const postReadTime = read_time?.trim() || '3 min read';
 
-    const newPost = await createBlogPost({
-      title: title.trim(),
-      excerpt: excerpt.trim(),
-      content: content.trim(),
-      date: postDate,
-      read_time: postReadTime,
-      slug,
-    });
+    const newPost = await createBlogPost(
+      {
+        title: title.trim(),
+        excerpt: excerpt.trim(),
+        content: content.trim(),
+        date: postDate,
+        read_time: postReadTime,
+        slug,
+      },
+      req
+    );
 
     return NextResponse.json(newPost, { status: 201 });
   } catch (err: any) {
@@ -80,7 +83,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Post ID is required.' }, { status: 400 });
     }
 
-    const result = await deleteBlogPost(id);
+    const result = await deleteBlogPost(id, req);
     if (!result.success) {
       return NextResponse.json({ error: result.error || 'Post not found.' }, { status: 404 });
     }

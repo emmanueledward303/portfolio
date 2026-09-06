@@ -140,7 +140,7 @@ export default function Contact() {
                 </svg>
                 <h3 className={styles.successTitle}>Message sent!</h3>
                 <p className={styles.successBody}>
-                  Thanks for reaching out — I&apos;ll get back to you within 24 hours.
+                  Thanks for reaching out  I&apos;ll get back to you within 24 hours.
                 </p>
                 <button
                   className="btn btn-outline"

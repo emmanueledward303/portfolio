@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { getProjects, createProject, deleteProject, updateProject } from '@/lib/db';
 import { isRequestAuthorized } from '@/lib/adminAuth';
 
-export async function GET() {
-  const projects = await getProjects();
+export async function GET(req: Request) {
+  const projects = await getProjects(req);
   return NextResponse.json(projects);
 }
 
@@ -33,17 +33,20 @@ export async function POST(req: Request) {
         ? tech_stack.split(',').map((s: string) => s.trim()).filter(Boolean)
         : [];
 
-    const newProject = await createProject({
-      title: title.trim(),
-      tagline: tagline?.trim() || '',
-      description: description.trim(),
-      category: category?.trim() || 'Full-Stack',
-      tech_stack: formattedTechStack,
-      demo_url: demo_url?.trim() || '',
-      github_url: github_url?.trim() || '',
-      image_url: image_url?.trim() || '',
-      featured: Boolean(featured),
-    });
+    const newProject = await createProject(
+      {
+        title: title.trim(),
+        tagline: tagline?.trim() || '',
+        description: description.trim(),
+        category: category?.trim() || 'Full-Stack',
+        tech_stack: formattedTechStack,
+        demo_url: demo_url?.trim() || '',
+        github_url: github_url?.trim() || '',
+        image_url: image_url?.trim() || '',
+        featured: Boolean(featured),
+      },
+      req
+    );
 
     return NextResponse.json(newProject, { status: 201 });
   } catch (err: any) {
@@ -77,7 +80,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Project ID is required to delete' }, { status: 400 });
     }
 
-    const result = await deleteProject(id);
+    const result = await deleteProject(id, req);
     if (!result.success) {
       return NextResponse.json(
         { error: result.error || 'Project not found or could not be deleted' },
@@ -122,17 +125,21 @@ export async function PUT(req: Request) {
         ? tech_stack.split(',').map((s: string) => s.trim()).filter(Boolean)
         : [];
 
-    const updated = await updateProject(id, {
-      title: title.trim(),
-      tagline: tagline?.trim() || '',
-      description: description.trim(),
-      category: category?.trim() || 'Full-Stack',
-      tech_stack: formattedTechStack,
-      demo_url: demo_url?.trim() || '',
-      github_url: github_url?.trim() || '',
-      image_url: image_url?.trim() || '',
-      featured: Boolean(featured),
-    });
+    const updated = await updateProject(
+      id,
+      {
+        title: title.trim(),
+        tagline: tagline?.trim() || '',
+        description: description.trim(),
+        category: category?.trim() || 'Full-Stack',
+        tech_stack: formattedTechStack,
+        demo_url: demo_url?.trim() || '',
+        github_url: github_url?.trim() || '',
+        image_url: image_url?.trim() || '',
+        featured: Boolean(featured),
+      },
+      req
+    );
 
     if (!updated) {
       return NextResponse.json({ error: 'Project not found or could not be updated' }, { status: 404 });

@@ -746,3 +746,266 @@
     padding: 28px 16px;
   }
 }
+
+/* =========================================================================
+   GITHUB AUTO-COMMIT & STORAGE SYNC STYLES
+   ========================================================================= */
+
+.syncBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 24px;
+  font-size: 0.875rem;
+  border: 1px solid transparent;
+  flex-wrap: wrap;
+}
+
+.syncBannerActive {
+  background-color: #f1f8f3;
+  border-color: #b7e0c4;
+  color: #1b532f;
+}
+
+.syncBannerWarning {
+  background-color: #fff9e6;
+  border-color: #f2dc9b;
+  color: #634300;
+}
+
+.syncBannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 260px;
+}
+
+.syncIndicatorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotActive {
+  background-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+}
+
+.dotWarning {
+  background-color: #e65100;
+  box-shadow: 0 0 0 3px rgba(230, 81, 0, 0.2);
+}
+
+.syncStatusTitle {
+  font-weight: 700;
+  font-family: var(--font-heading);
+  display: block;
+  font-size: 0.95rem;
+}
+
+.syncStatusDesc {
+  font-size: 0.825rem;
+  margin-top: 2px;
+  opacity: 0.9;
+}
+
+.syncBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.syncBadgeActive {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.syncBadgeWarning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.tokenInputRow {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.instructionsBox {
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-stone);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.instructionTitle {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-black);
+  margin-bottom: 12px;
+}
+
+.stepList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stepItem {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 0.875rem;
+  color: var(--color-ink);
+  line-height: 1.5;
+}
+
+.stepNumber {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--color-brown);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* =========================================================================
+   STORAGE & SYNC BANNER + TAB
+   ========================================================================= */
+
+.syncBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.syncBannerActive {
+  background: #edf7f1;
+  border: 1px solid #a4d4b4;
+}
+
+.syncBannerWarning {
+  background: #fff8e8;
+  border: 1px solid #f2d97a;
+}
+
+.syncBannerLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+}
+
+.syncIndicatorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.dotActive {
+  background-color: #2d9c5a;
+  box-shadow: 0 0 0 3px rgba(45, 156, 90, 0.2);
+}
+
+.dotWarning {
+  background-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.2);
+}
+
+.syncStatusTitle {
+  display: block;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  color: var(--color-black);
+  margin-bottom: 3px;
+}
+
+.syncStatusDesc {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--color-ink);
+  line-height: 1.5;
+}
+
+.syncBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.syncBadgeActive {
+  background: rgba(45, 156, 90, 0.12);
+  color: #1a6b3b;
+}
+
+.syncBadgeWarning {
+  background: rgba(217, 119, 6, 0.12);
+  color: #7a4a00;
+}
+
+.tokenInputRow {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.instructionsBox {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--color-paper);
+  border: 1px solid var(--color-stone);
+  border-radius: var(--radius-sm);
+}
+
+.instructionTitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--color-black);
+  font-size: 0.95rem;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 640px) {
+  .syncBanner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tokenInputRow {
+    flex-direction: column;
+  }
+}

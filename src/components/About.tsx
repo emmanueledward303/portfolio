@@ -47,7 +47,7 @@ export default function About() {
             and apps people open more than once.
           </p>
           <p className={styles.body}>
-            My background spans Python data pipelines, BI Tools , Excel , SQL analytics, and full-stack
+            My background spans Python data pipelines, BI tools, Excel, SQL analytics and full-stack
             web development with React and Next.js. I care deeply about clear
             communication, honest metrics, and well-crafted interfaces.
           </p>

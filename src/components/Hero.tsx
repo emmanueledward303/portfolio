@@ -11,7 +11,7 @@ export default function Hero() {
         <div className={styles.copy}>
           <p className={styles.greeting}>Hello, I&apos;m</p>
           <h1 className={styles.name}>Edward Emmanuel</h1>
-          <p className={styles.tagline}>Aspiring Data Analyst &amp; Software Engineer</p>
+          <p className={styles.tagline}>Data Analyst &amp; Software Engineer</p>
           <p className={styles.intro}>
             I dig through spreadsheets and messy datasets until they tell me what's actually true,
             then ship the dashboard or app that puts it in front of people.

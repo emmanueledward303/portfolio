@@ -121,7 +121,7 @@ export default function Resume() {
             </div>
 
             <p style={{ color: 'var(--color-muted)', fontSize: '0.925rem', lineHeight: '1.6' }}>
-              Includes extensive details of my works and what i have done so far .
+              A resume is a concise summary of your skills, experiences, and accomplishments. It highlights your qualifications and achievements to potential employers.
             </p>
 
             <div className={styles.actions}>
