@@ -1,5 +1,20 @@
 [
   {
+    "id": "proj-1788714109922",
+    "created_at": "2026-09-06T17:01:49.922Z",
+    "title": "Fucku",
+    "tagline": "Hbsbs",
+    "description": "Fghjhvbjkvc",
+    "category": "Data Analytics",
+    "tech_stack": [
+      "Nnsjdhhd"
+    ],
+    "demo_url": "",
+    "github_url": "",
+    "image_url": "",
+    "featured": false
+  },
+  {
     "id": "proj-1788630374518",
     "created_at": "2026-09-05T17:46:14.518Z",
     "title": "Autonomous Data Analysis Agent",
