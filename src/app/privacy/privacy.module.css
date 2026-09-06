@@ -11,8 +11,8 @@
 
 /* Header */
 .header {
-  margin-bottom: clamp(40px, 6vw, 64px);
-  padding-bottom: 32px;
+  margin-bottom: clamp(32px, 5vw, 48px);
+  padding-bottom: 28px;
   border-bottom: 2px solid var(--color-stone);
 }
 
@@ -122,6 +122,12 @@
 
 .link:hover {
   color: var(--color-brown-dark);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--color-brown);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 /* Back button row */

@@ -27,7 +27,7 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { heading, paragraphs, facts, eyebrow } = body;
+    const { heading, paragraphs, facts, eyebrow, image_url, profile_image_url } = body;
 
     if (!heading?.trim()) {
       return NextResponse.json(
@@ -51,6 +51,8 @@ export async function PUT(req: Request) {
         facts: Array.isArray(facts)
           ? facts.filter((f: any) => f && f.label && f.value)
           : undefined,
+        image_url: typeof image_url === 'string' ? image_url.trim() : undefined,
+        profile_image_url: typeof profile_image_url === 'string' ? profile_image_url.trim() : undefined,
       },
       req
     );

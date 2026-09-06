@@ -1,7 +1,7 @@
 /* =========================================================================
    globals.css — Design tokens, resets, and global base styles
    Edward Emmanuel Portfolio
-   Theme: Whipped Butter (#F2E6B3) & Cookie Crumble (#4B2E21)
+   Theme: Charcoal (#2A2529) & Pale Ivory (#F3F0E7)
    ========================================================================= */
 
 /* Google Fonts are loaded via <link> in layout.tsx */
@@ -10,23 +10,41 @@
    CSS Custom Properties (Design Tokens)
    ------------------------------------------------------------------------- */
 :root {
-  /* Exact Theme Palette */
-  --color-paper: #F2E6B3;
-  /* Whipped Butter — main page background */
-  --color-cream: #E8DCA6;
-  /* Rich Whipped Butter for alternating sections/cards */
-  --color-stone: #DAC98B;
-  /* Borders, dividers, subtle separators */
-  --color-brown: #4B2E21;
-  /* Cookie Crumble — primary accent & buttons */
-  --color-brown-dark: #362017;
-  /* Deeper Cookie Crumble for hover states */
-  --color-black: #4B2E21;
-  /* Cookie Crumble — headings & title brand */
-  --color-ink: #3C241A;
-  /* Deep readable Cookie Crumble for body text */
-  --color-muted: #6C4A3B;
-  /* Warm muted Cookie Crumble for subheadings & dates */
+  /* Exact Theme Palette: Charcoal (#2A2529) & Pale Ivory (#F3F0E7) */
+  --color-paper: #F3F0E7;
+  /* Pale Ivory — primary canvas & page background */
+  --color-cream: #E9E5DA;
+  /* Soft Pale Ivory for alternating sections, cards & elevated containers */
+  --color-stone: #D8D3C5;
+  /* Warm stone for dividers, subtle borders, card frames */
+  --color-brown: #2A2529;
+  /* Charcoal — primary interactive color, logo mark, solid buttons */
+  --color-brown-dark: #1A1619;
+  /* Obsidian Charcoal for active/hover states & dark band backgrounds */
+  --color-black: #2A2529;
+  /* Charcoal — titles, primary headings, branding */
+  --color-ink: #2A2529;
+  /* Deep Charcoal for rich, readable body copy */
+  --color-muted: #645E63;
+  /* Slate Charcoal — subtitles, captions, metadata (WCAG AA 5.4:1 contrast on Pale Ivory) */
+
+  /* Complementary Palette Accents */
+  --color-accent: #B67343;
+  /* Warm Cognac / Terracotta Gold accent for badges, stars, highlights */
+  --color-accent-hover: #9E5F32;
+  --color-accent-light: #F7EFE8;
+  --color-accent-border: #E8D3C3;
+
+  /* Status Colors */
+  --color-success: #235E3B;
+  /* Accessible Forest Green */
+  --color-success-bg: #EAF4EE;
+  --color-warning: #995D0B;
+  /* Warm Amber */
+  --color-warning-bg: #FEF6EB;
+  --color-error: #9E2B2B;
+  /* Deep Crimson */
+  --color-error-bg: #FCEBEB;
 
   /* Typography */
   --font-heading: 'Merriweather', Georgia, serif;
@@ -66,9 +84,34 @@
   --radius-md: 8px;
   --radius-lg: 14px;
 
-  /* Subtle transitions without bouncy motion */
+  /* Transitions — motion-safe values */
   --transition-fast: 120ms ease;
   --transition-base: 200ms ease;
+}
+
+/* -------------------------------------------------------------------------
+   Reduced Motion — honor OS-level preference
+   Sets transition tokens to 0ms so ALL component transitions are silenced
+   without needing per-component overrides.
+   ------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* -------------------------------------------------------------------------
@@ -125,6 +168,33 @@ button {
 }
 
 /* -------------------------------------------------------------------------
+   Skip to main content — keyboard accessibility
+   Visually hidden until focused; becomes visible on keyboard navigation.
+   ------------------------------------------------------------------------- */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 9999;
+  padding: 12px 20px;
+  background-color: var(--color-brown);
+  color: var(--color-paper);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 0 0 var(--radius-md) 0;
+  white-space: nowrap;
+  transition: top var(--transition-fast);
+}
+
+.skip-to-content:focus {
+  top: 0;
+  outline: 3px solid var(--color-paper);
+  outline-offset: -3px;
+}
+
+/* -------------------------------------------------------------------------
    Container utility
    ------------------------------------------------------------------------- */
 .container {
@@ -135,13 +205,16 @@ button {
 }
 
 /* -------------------------------------------------------------------------
-   Button system
+   Button system — WCAG touch target: min 44x44px
    ------------------------------------------------------------------------- */
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 12px 28px;
+  min-height: 44px;
+  min-width: 44px;
   font-family: var(--font-body);
   font-size: var(--text-sm);
   font-weight: 600;
@@ -167,7 +240,7 @@ button {
 .btn-primary:hover {
   background-color: var(--color-brown-dark);
   border-color: var(--color-brown-dark);
-  box-shadow: 0 4px 14px rgba(75, 46, 33, 0.22);
+  box-shadow: 0 4px 14px rgba(42, 37, 41, 0.22);
 }
 
 .btn-outline {
@@ -182,7 +255,7 @@ button {
 }
 
 /* -------------------------------------------------------------------------
-   Focus visible (accessibility)
+   Focus visible (accessibility) — styled to palette, not browser default
    ------------------------------------------------------------------------- */
 :focus-visible {
   outline: 2px solid var(--color-brown);

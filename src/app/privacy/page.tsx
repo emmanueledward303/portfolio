@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import styles from './privacy.module.css';
+import Breadcrumb from '@/components/Breadcrumb';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy — Edward Emmanuel',
@@ -14,10 +15,18 @@ export default function PrivacyPage() {
   return (
     <main className={styles.page} id="main-content">
       <div className={`container ${styles.inner}`}>
-        {/* Header */}
-        <header className={styles.header}>
+        {/* Breadcrumb — WCAG 2.4.8 Location */}
+        <Breadcrumb
+          items={[
+            { label: 'Home', href: '/' },
+            { label: 'Privacy Policy' },
+          ]}
+        />
+
+        {/* Page header */}
+        <header className={styles.header} aria-labelledby="privacy-heading">
           <p className={styles.eyebrow}>Legal</p>
-          <h1 className={styles.heading}>Privacy Policy</h1>
+          <h1 id="privacy-heading" className={styles.heading}>Privacy Policy</h1>
           <p className={styles.meta}>Last updated: {LAST_UPDATED}</p>
         </header>
 

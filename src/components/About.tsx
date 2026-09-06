@@ -13,6 +13,8 @@ interface AboutData {
   heading: string;
   paragraphs: string[];
   facts: AboutFact[];
+  image_url?: string;
+  profile_image_url?: string;
 }
 
 const DEFAULT_ABOUT: AboutData = {
@@ -87,6 +89,17 @@ export default function About() {
         {/* Right column: Bio Story & Narrative */}
         <div className={styles.rightCol}>
           <div className={styles.bioCard}>
+            {(data.image_url || '/about.jpg') && (
+              <div className={styles.imageFrame}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={data.image_url || '/about.jpg'}
+                  alt="Edward Emmanuel - Workspace & Engineering Background"
+                  className={styles.aboutImg}
+                  loading="lazy"
+                />
+              </div>
+            )}
             <div className={styles.bioCardHeader}>
               <span className={styles.cardTag}>Professional Background</span>
             </div>

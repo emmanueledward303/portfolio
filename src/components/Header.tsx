@@ -82,6 +82,7 @@ export default function Header() {
         className={`${styles.drawer} ${menuOpen ? styles.drawerOpen : ''}`}
         aria-label="Mobile navigation drawer"
         aria-hidden={!menuOpen}
+        inert={!menuOpen}
       >
         <div className={styles.drawerHeader}>
           <div className={styles.drawerBrand}>
@@ -107,11 +108,9 @@ export default function Header() {
               href={link.href}
               className={styles.drawerLink}
               onClick={() => setMenuOpen(false)}
-              style={{ animationDelay: `${index * 40}ms` }}
             >
               <span className={styles.drawerLinkIndex}>0{index + 1}</span>
               <span className={styles.drawerLinkLabel}>{link.label}</span>
-              <span className={styles.drawerLinkArrow} aria-hidden="true">&rarr;</span>
             </a>
           ))}
         </nav>

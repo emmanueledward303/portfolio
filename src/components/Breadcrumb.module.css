@@ -1,0 +1,80 @@
+/* =========================================================================
+   Breadcrumb.module.css
+   Minimal, clean breadcrumb navigation — follows the portfolio design system
+   ========================================================================= */
+
+.breadcrumb {
+  margin-bottom: 28px;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Ancestor link */
+.link {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-brown);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  /* Minimum touch target for mobile */
+  padding: 6px 2px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: color var(--transition-fast);
+}
+
+.link:hover {
+  color: var(--color-brown-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Separator character between items */
+.separator {
+  font-size: var(--text-xs);
+  color: var(--color-stone);
+  padding: 0 8px;
+  user-select: none;
+  font-weight: 400;
+}
+
+/* Current / active page — not a link */
+.current {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 2px;
+}
+
+/* =========================================================================
+   MOBILE
+   ========================================================================= */
+@media (max-width: 480px) {
+  .breadcrumb {
+    margin-bottom: 20px;
+  }
+
+  .link,
+  .current {
+    font-size: 0.7rem;
+  }
+}

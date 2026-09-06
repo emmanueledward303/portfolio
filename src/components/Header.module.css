@@ -23,6 +23,8 @@
   gap: 12px;
   text-decoration: none;
   flex-shrink: 0;
+  /* touch target */
+  min-height: 44px;
 }
 
 .logoMark {
@@ -64,6 +66,10 @@
   text-decoration: none;
   letter-spacing: 0.02em;
   padding-block: 4px;
+  /* ensure touch target */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   position: relative;
   transition: color var(--transition-fast);
 }
@@ -89,12 +95,16 @@
   transform: scaleX(1);
 }
 
-/* Hamburger */
+/* Hamburger — minimum 44x44 touch target */
 .hamburger {
   display: none;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 5px;
-  padding: 8px;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
   cursor: pointer;
   background: none;
   border: none;
@@ -108,7 +118,7 @@
 
 .bar {
   display: block;
-  width: 24px;
+  width: 22px;
   height: 2px;
   background-color: var(--color-black);
   border-radius: 2px;
@@ -123,16 +133,15 @@
    MOBILE SLIDE-IN DRAWER (FROM LEFT)
    ========================================================================= */
 
+/* Semi-transparent backdrop — no blur (distracting heavy effect removed) */
 .drawerBackdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(75, 46, 33, 0.45);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background-color: rgba(42, 37, 41, 0.55);
   z-index: 998;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity var(--transition-base);
 }
 
 .backdropVisible {
@@ -150,13 +159,22 @@
   background-color: var(--color-paper);
   z-index: 999;
   transform: translateX(-100%);
-  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 6px 0 28px rgba(75, 46, 33, 0.18);
+  box-shadow: 6px 0 28px rgba(42, 37, 41, 0.22);
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--color-stone);
   overflow-y: auto;
-  will-change: transform;
+}
+
+/* Only animate the drawer when the user has not requested reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  .drawer {
+    transition: transform 0.28s ease;
+  }
+
+  .drawerBackdrop {
+    transition: opacity 0.25s ease;
+  }
 }
 
 .drawerOpen {
@@ -185,18 +203,19 @@
   color: var(--color-black);
 }
 
+/* 44×44 touch target */
 .closeBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-stone);
   background: var(--color-paper);
   color: var(--color-black);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .closeBtn:hover {
@@ -208,22 +227,25 @@
 .drawerNav {
   display: flex;
   flex-direction: column;
-  padding: 12px 0;
+  padding: 8px 0;
   flex: 1;
 }
 
+/* Drawer links — 44px min touch target via padding, no layout-shifting hover */
 .drawerLink {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  padding: 14px 22px;
+  padding: 12px 22px;
+  min-height: 44px;
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-black);
   border-bottom: 1px solid rgba(214, 203, 158, 0.3);
-  transition: all var(--transition-fast);
+  /* Use border-left accent instead of shifting padding on hover */
+  border-left: 3px solid transparent;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .drawerLinkIndex {
@@ -240,18 +262,12 @@
 .drawerLinkArrow {
   color: var(--color-muted);
   font-size: 0.9rem;
-  transition: transform var(--transition-fast), color var(--transition-fast);
 }
 
 .drawerLink:hover {
   background-color: var(--color-cream);
   color: var(--color-brown);
-  padding-left: 26px;
-}
-
-.drawerLink:hover .drawerLinkArrow {
-  color: var(--color-brown);
-  transform: translateX(4px);
+  border-left-color: var(--color-brown);
 }
 
 .drawerLink:hover .drawerLinkIndex {

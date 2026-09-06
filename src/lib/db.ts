@@ -72,6 +72,8 @@ export interface AboutData {
   heading: string;
   paragraphs: string[];
   facts: AboutFact[];
+  image_url?: string;
+  profile_image_url?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -817,6 +819,8 @@ const defaultAboutData: AboutData = {
     { label: 'Work preference', value: 'Remote & Hybrid' },
     { label: 'To opportunities', value: 'Open' },
   ],
+  image_url: '/about.jpg',
+  profile_image_url: '/profile.jpg',
 };
 
 const ABOUT_DATA_FILE = path.join(process.cwd(), 'data', 'about.json');
@@ -851,6 +855,8 @@ export async function updateAboutData(data: Partial<AboutData>, req?: Request): 
       Array.isArray(data.facts) && data.facts.length > 0
         ? data.facts
         : current.facts,
+    image_url: data.image_url !== undefined ? data.image_url : (current.image_url || '/about.jpg'),
+    profile_image_url: data.profile_image_url !== undefined ? data.profile_image_url : (current.profile_image_url || '/profile.jpg'),
   };
 
   inMemoryAboutData = updated;

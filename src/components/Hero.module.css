@@ -72,7 +72,7 @@
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 3px solid var(--color-brown);
-  box-shadow: 0 14px 32px rgba(75, 46, 33, 0.18);
+  box-shadow: 0 14px 32px rgba(42, 37, 41, 0.20);
   background-color: var(--color-paper);
 }
 

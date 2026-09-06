@@ -40,8 +40,8 @@ export default function AdminPage() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
 
-  // Active tab: 'about' | 'projects' | 'blog' | 'resume' | 'storage' | 'overview'
-  const [activeTab, setActiveTab] = useState<'about' | 'projects' | 'blog' | 'resume' | 'storage' | 'overview'>('projects');
+  // Active tab: 'about' | 'projects' | 'blog' | 'resume' | 'media' | 'storage' | 'overview'
+  const [activeTab, setActiveTab] = useState<'about' | 'projects' | 'blog' | 'resume' | 'media' | 'storage' | 'overview'>('projects');
 
   // About Me State
   interface AboutFact {
@@ -54,6 +54,8 @@ export default function AdminPage() {
     heading: string;
     paragraphs: string[];
     facts: AboutFact[];
+    image_url: string;
+    profile_image_url: string;
   }
 
   const [aboutData, setAboutData] = useState<AboutState>({
@@ -65,6 +67,8 @@ export default function AdminPage() {
       { label: 'Work preference', value: 'Remote & Hybrid' },
       { label: 'To opportunities', value: 'Open' },
     ],
+    image_url: '/about.jpg',
+    profile_image_url: '/profile.jpg',
   });
   const [aboutLoading, setAboutLoading] = useState(false);
   const [aboutSaving, setAboutSaving] = useState(false);
@@ -107,8 +111,29 @@ export default function AdminPage() {
     tech_stack: '',
     demo_url: '',
     github_url: '',
+    image_url: '',
     featured: false,
   });
+
+  // Media Upload State
+  const [heroImageUploading, setHeroImageUploading] = useState(false);
+  const [aboutImageUploading, setAboutImageUploading] = useState(false);
+  const [projectImageUploading, setProjectImageUploading] = useState(false);
+  const [generalImageUploading, setGeneralImageUploading] = useState(false);
+  const [generalUploadedUrl, setGeneralUploadedUrl] = useState<string | null>(null);
+
+  const uploadImageFile = async (file: File, target: string): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('target', target);
+    const res = await fetch('/api/admin/upload-image', {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Upload failed');
+    return data.url as string;
+  };
 
   // Resume state
   const [resumeMeta, setResumeMeta] = useState<ResumeMeta | null>(null);
@@ -167,6 +192,8 @@ export default function AdminPage() {
               { label: 'Work preference', value: 'Remote & Hybrid' },
               { label: 'To opportunities', value: 'Open' },
             ],
+            image_url: data.image_url || '/about.jpg',
+            profile_image_url: data.profile_image_url || '/profile.jpg',
           });
         }
       })
@@ -242,6 +269,8 @@ export default function AdminPage() {
           heading: aboutData.heading,
           paragraphs: validParagraphs,
           facts: aboutData.facts,
+          image_url: aboutData.image_url,
+          profile_image_url: aboutData.profile_image_url,
         }),
       });
       const data = await res.json();
@@ -347,6 +376,7 @@ export default function AdminPage() {
           .filter(Boolean),
         demo_url: newProject.demo_url,
         github_url: newProject.github_url,
+        image_url: newProject.image_url?.trim() || undefined,
         featured: newProject.featured,
       };
 
@@ -376,6 +406,7 @@ export default function AdminPage() {
         tech_stack: '',
         demo_url: '',
         github_url: '',
+        image_url: '',
         featured: false,
       });
       loadProjects();
@@ -396,6 +427,7 @@ export default function AdminPage() {
       tech_stack: Array.isArray(proj.tech_stack) ? proj.tech_stack.join(', ') : '',
       demo_url: proj.demo_url || '',
       github_url: proj.github_url || '',
+      image_url: proj.image_url || '',
       featured: Boolean(proj.featured),
     });
     setProjectSuccessMsg(null);
@@ -414,6 +446,7 @@ export default function AdminPage() {
       tech_stack: '',
       demo_url: '',
       github_url: '',
+      image_url: '',
       featured: false,
     });
     setProjectSuccessMsg(null);
@@ -833,6 +866,15 @@ export default function AdminPage() {
             <button
               type="button"
               role="tab"
+              aria-selected={activeTab === 'media'}
+              className={`${styles.tabBtn} ${activeTab === 'media' ? styles.tabActive : ''}`}
+              onClick={() => setActiveTab('media')}
+            >
+              Media &amp; Images
+            </button>
+            <button
+              type="button"
+              role="tab"
               aria-selected={activeTab === 'storage'}
               className={`${styles.tabBtn} ${activeTab === 'storage' ? styles.tabActive : ''}`}
               onClick={() => setActiveTab('storage')}
@@ -875,6 +917,119 @@ export default function AdminPage() {
                     {aboutErrorMsg}
                   </div>
                 )}
+
+                {/* Visual Media / Portraits Section */}
+                <div className={styles.imageUploadSection}>
+                  <h3 style={{ fontSize: '1rem', fontFamily: 'var(--font-heading)', color: 'var(--color-black)', marginBottom: '8px' }}>
+                    Visual Media &amp; Portraits
+                  </h3>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--color-muted)', marginBottom: '16px' }}>
+                    Update the Hero header portrait and the About section photo. Uploading a file updates and commits it directly to your repository.
+                  </p>
+                  <div className={styles.imageUploadGrid}>
+                    {/* Hero Portrait */}
+                    <div className={styles.imageUploadCard}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-brown)' }}>
+                        Hero Portrait Photo
+                      </span>
+                      <div className={styles.imagePreviewFrame}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={aboutData.profile_image_url || '/profile.jpg'}
+                          alt="Hero profile preview"
+                          className={styles.imagePreviewImg}
+                        />
+                      </div>
+                      <div className={styles.imageUploadControls}>
+                        <div className={styles.uploadFileBtnWrapper}>
+                          <button type="button" className="btn btn-outline" style={{ width: '100%', fontSize: '0.8rem', padding: '8px' }} disabled={heroImageUploading}>
+                            {heroImageUploading ? 'Uploading & Replacing...' : '📷 Replace Hero Photo'}
+                          </button>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className={styles.hiddenFileInput}
+                            disabled={heroImageUploading}
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              setHeroImageUploading(true);
+                              try {
+                                const url = await uploadImageFile(file, 'profile');
+                                setAboutData((prev) => ({ ...prev, profile_image_url: url }));
+                                setAboutSuccessMsg('Hero portrait successfully replaced! Remember to click "Save About Me Profile" to commit all changes.');
+                              } catch (err: any) {
+                                setAboutErrorMsg(err.message || 'Failed to upload photo');
+                              } finally {
+                                setHeroImageUploading(false);
+                                e.target.value = '';
+                              }
+                            }}
+                          />
+                        </div>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          style={{ fontSize: '0.8rem', padding: '6px 10px' }}
+                          placeholder="/profile.jpg or URL"
+                          value={aboutData.profile_image_url}
+                          onChange={(e) => setAboutData({ ...aboutData, profile_image_url: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    {/* About Section Photo */}
+                    <div className={styles.imageUploadCard}>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-brown)' }}>
+                        About Section Photo
+                      </span>
+                      <div className={styles.imagePreviewFrame}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={aboutData.image_url || '/about.jpg'}
+                          alt="About photo preview"
+                          className={styles.imagePreviewImg}
+                        />
+                      </div>
+                      <div className={styles.imageUploadControls}>
+                        <div className={styles.uploadFileBtnWrapper}>
+                          <button type="button" className="btn btn-outline" style={{ width: '100%', fontSize: '0.8rem', padding: '8px' }} disabled={aboutImageUploading}>
+                            {aboutImageUploading ? 'Uploading & Replacing...' : '📷 Replace About Photo'}
+                          </button>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className={styles.hiddenFileInput}
+                            disabled={aboutImageUploading}
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              setAboutImageUploading(true);
+                              try {
+                                const url = await uploadImageFile(file, 'about');
+                                setAboutData((prev) => ({ ...prev, image_url: url }));
+                                setAboutSuccessMsg('About section photo successfully replaced! Remember to click "Save About Me Profile" to commit all changes.');
+                              } catch (err: any) {
+                                setAboutErrorMsg(err.message || 'Failed to upload photo');
+                              } finally {
+                                setAboutImageUploading(false);
+                                e.target.value = '';
+                              }
+                            }}
+                          />
+                        </div>
+                        <input
+                          type="text"
+                          className={styles.input}
+                          style={{ fontSize: '0.8rem', padding: '6px 10px' }}
+                          placeholder="/about.jpg or URL"
+                          value={aboutData.image_url}
+                          onChange={(e) => setAboutData({ ...aboutData, image_url: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <form onSubmit={handleSaveAbout}>
                   <div className={styles.fieldGroup}>
@@ -1122,6 +1277,77 @@ export default function AdminPage() {
                     </div>
                   </div>
 
+                  {/* Project Screenshot / Thumbnail Field */}
+                  <div className={styles.fieldGroup}>
+                    <label className={styles.fieldLabel} htmlFor="proj-image">
+                      Project Thumbnail / Screenshot
+                    </label>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '8px' }}>
+                      <input
+                        id="proj-image"
+                        type="text"
+                        className={styles.input}
+                        placeholder="/projects/filename.png or https://..."
+                        value={newProject.image_url}
+                        onChange={(e) => setNewProject({ ...newProject, image_url: e.target.value })}
+                        style={{ flex: 1 }}
+                      />
+                      <div className={styles.uploadFileBtnWrapper} style={{ flexShrink: 0 }}>
+                        <button
+                          type="button"
+                          className="btn btn-outline"
+                          style={{ fontSize: '0.8rem', padding: '10px 14px', whiteSpace: 'nowrap' }}
+                          disabled={projectImageUploading}
+                        >
+                          {projectImageUploading ? 'Uploading...' : '📁 Upload File'}
+                        </button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className={styles.hiddenFileInput}
+                          disabled={projectImageUploading}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            setProjectImageUploading(true);
+                            try {
+                              const url = await uploadImageFile(file, 'projects');
+                              setNewProject((prev) => ({ ...prev, image_url: url }));
+                            } catch (err: any) {
+                              setProjectErrorMsg(err.message || 'Image upload failed');
+                            } finally {
+                              setProjectImageUploading(false);
+                              e.target.value = '';
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {newProject.image_url && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '6px' }}>
+                        <div style={{ width: '80px', height: '52px', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--color-stone)' }}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={newProject.image_url}
+                            alt="Preview"
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          />
+                        </div>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--color-muted)' }}>
+                          Card preview
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setNewProject((prev) => ({ ...prev, image_url: '' }))}
+                          style={{ fontSize: '0.75rem', color: '#c0392b', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                        >
+                          Remove image
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
                   <div className={styles.checkboxRow}>
                     <input
                       id="proj-featured"
@@ -1188,11 +1414,21 @@ export default function AdminPage() {
                     {projects.map((proj) => (
                       <div key={proj.id} className={styles.projectItem} style={editingProjectId === proj.id ? { borderColor: 'var(--color-brown)', backgroundColor: 'rgba(232, 220, 166, 0.25)' } : undefined}>
                         <div className={styles.projectItemTop}>
-                          <div>
-                            <span className={styles.itemCategory}>
-                              {proj.category}
-                            </span>
-                            <h3 className={styles.itemTitle}>{proj.title}</h3>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            {proj.image_url && (
+                              /* eslint-disable-next-line @next/next/no-img-element */
+                              <img
+                                src={proj.image_url}
+                                alt=""
+                                className={styles.projectItemThumb}
+                              />
+                            )}
+                            <div>
+                              <span className={styles.itemCategory}>
+                                {proj.category}
+                              </span>
+                              <h3 className={styles.itemTitle}>{proj.title}</h3>
+                            </div>
                           </div>
                           <div className={styles.itemActions}>
                             <button
@@ -1461,6 +1697,219 @@ export default function AdminPage() {
                     disabled={resumeUploading}
                   />
                 </label>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3.5: MEDIA & IMAGES MANAGER */}
+          {activeTab === 'media' && (
+            <div style={{ maxWidth: '880px', margin: '0 auto' }}>
+              <div className={styles.sectionCard}>
+                <h2 className={styles.sectionTitle}>Media &amp; Images Hub</h2>
+                <p className={styles.sectionDesc}>
+                  Central command for all imagery across your portfolio. Upload, replace, and manage the Hero portrait, About section photograph, and general project assets.
+                </p>
+
+                {/* Section 1: Hero & About Core Images */}
+                <h3 style={{ fontSize: '1.05rem', fontFamily: 'var(--font-heading)', color: 'var(--color-black)', marginTop: '24px', marginBottom: '8px' }}>
+                  Core Site Visuals
+                </h3>
+                <div className={styles.imageUploadGrid}>
+                  {/* Hero Portrait Card */}
+                  <div className={styles.imageUploadCard}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-brown)' }}>
+                        Hero Portrait
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--color-muted)' }}>Location: /profile.jpg</span>
+                    </div>
+                    <div className={styles.imagePreviewFrame} style={{ height: '220px' }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={aboutData.profile_image_url || '/profile.jpg'}
+                        alt="Hero Profile Portrait"
+                        className={styles.imagePreviewImg}
+                      />
+                    </div>
+                    <div className={styles.imageUploadControls}>
+                      <div className={styles.uploadFileBtnWrapper}>
+                        <button type="button" className="btn btn-primary" style={{ width: '100%', fontSize: '0.85rem', padding: '10px' }} disabled={heroImageUploading}>
+                          {heroImageUploading ? 'Uploading & Replacing...' : '📷 Replace Portrait Photo'}
+                        </button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className={styles.hiddenFileInput}
+                          disabled={heroImageUploading}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            setHeroImageUploading(true);
+                            try {
+                              const url = await uploadImageFile(file, 'profile');
+                              setAboutData((prev) => ({ ...prev, profile_image_url: url }));
+                              alert('Hero portrait photo replaced successfully! Click "Save About Me Profile" if you wish to persist meta changes.');
+                            } catch (err: any) {
+                              alert(err.message || 'Failed to upload photo');
+                            } finally {
+                              setHeroImageUploading(false);
+                              e.target.value = '';
+                            }
+                          }}
+                        />
+                      </div>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--color-muted)', margin: 0, textAlign: 'center' }}>
+                        Displayed on the top header section next to your introduction.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* About Section Photo Card */}
+                  <div className={styles.imageUploadCard}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '0.82rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-brown)' }}>
+                        About Section Photo
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--color-muted)' }}>Location: /about.jpg</span>
+                    </div>
+                    <div className={styles.imagePreviewFrame} style={{ height: '220px' }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={aboutData.image_url || '/about.jpg'}
+                        alt="About Section Workspace"
+                        className={styles.imagePreviewImg}
+                      />
+                    </div>
+                    <div className={styles.imageUploadControls}>
+                      <div className={styles.uploadFileBtnWrapper}>
+                        <button type="button" className="btn btn-primary" style={{ width: '100%', fontSize: '0.85rem', padding: '10px' }} disabled={aboutImageUploading}>
+                          {aboutImageUploading ? 'Uploading & Replacing...' : '📷 Replace About Photo'}
+                        </button>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className={styles.hiddenFileInput}
+                          disabled={aboutImageUploading}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            setAboutImageUploading(true);
+                            try {
+                              const url = await uploadImageFile(file, 'about');
+                              setAboutData((prev) => ({ ...prev, image_url: url }));
+                              alert('About section photo replaced successfully!');
+                            } catch (err: any) {
+                              alert(err.message || 'Failed to upload photo');
+                            } finally {
+                              setAboutImageUploading(false);
+                              e.target.value = '';
+                            }
+                          }}
+                        />
+                      </div>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--color-muted)', margin: 0, textAlign: 'center' }}>
+                        Displayed prominently in your About Me story card.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2: General Asset Uploader */}
+                <div style={{ marginTop: '36px', borderTop: '1px solid var(--color-stone)', paddingTop: '24px' }}>
+                  <h3 style={{ fontSize: '1.05rem', fontFamily: 'var(--font-heading)', color: 'var(--color-black)', marginBottom: '8px' }}>
+                    Upload New Image Asset (Projects, Badges, or Articles)
+                  </h3>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--color-muted)', marginBottom: '16px' }}>
+                    Upload any image to generate a clean relative URL (saved in <code>/public/uploads/</code> or committed to GitHub) that you can paste into Project thumbnails or blog articles.
+                  </p>
+
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div className={styles.uploadFileBtnWrapper}>
+                      <button type="button" className="btn btn-outline" style={{ fontSize: '0.85rem', padding: '10px 18px' }} disabled={generalImageUploading}>
+                        {generalImageUploading ? 'Uploading Asset...' : '⬆ Select & Upload Image'}
+                      </button>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className={styles.hiddenFileInput}
+                        disabled={generalImageUploading}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          setGeneralImageUploading(true);
+                          try {
+                            const url = await uploadImageFile(file, 'general');
+                            setGeneralUploadedUrl(url);
+                          } catch (err: any) {
+                            alert(err.message || 'Failed to upload image');
+                          } finally {
+                            setGeneralImageUploading(false);
+                            e.target.value = '';
+                          }
+                        }}
+                      />
+                    </div>
+
+                    {generalUploadedUrl && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--color-cream)', padding: '6px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-stone)' }}>
+                        <span style={{ fontSize: '0.82rem', fontFamily: 'monospace', color: 'var(--color-brown)' }}>
+                          {generalUploadedUrl}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText(generalUploadedUrl);
+                            alert(`Copied URL: ${generalUploadedUrl}`);
+                          }}
+                          className="btn btn-outline"
+                          style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                        >
+                          Copy URL
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Section 3: Project Images Quick Overview */}
+                <div style={{ marginTop: '36px', borderTop: '1px solid var(--color-stone)', paddingTop: '24px' }}>
+                  <h3 style={{ fontSize: '1.05rem', fontFamily: 'var(--font-heading)', color: 'var(--color-black)', marginBottom: '8px' }}>
+                    Projects Imagery Status
+                  </h3>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--color-muted)', marginBottom: '16px' }}>
+                    Review which side projects have custom thumbnails and which are text-only cards.
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {projects.map((p) => (
+                      <div key={p.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'var(--color-paper)', border: '1px solid var(--color-stone)', borderRadius: 'var(--radius-sm)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          {p.image_url ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img src={p.image_url} alt="" style={{ width: '48px', height: '36px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--color-stone)' }} />
+                          ) : (
+                            <div style={{ width: '48px', height: '36px', background: 'var(--color-stone)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', color: 'var(--color-muted)' }}>
+                              None
+                            </div>
+                          )}
+                          <div>
+                            <span style={{ fontWeight: 600, fontSize: '0.88rem', color: 'var(--color-black)' }}>{p.title}</span>
+                            <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-muted)' }}>{p.category} &bull; {p.image_url ? p.image_url : 'No thumbnail set'}</span>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className={styles.editBtn}
+                          onClick={() => {
+                            setActiveTab('projects');
+                            handleStartEditProject(p);
+                          }}
+                        >
+                          Edit in Projects Tab &rarr;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           )}

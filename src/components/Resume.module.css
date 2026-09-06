@@ -32,7 +32,7 @@
 
 .subheading {
   font-size: var(--text-base);
-  color: #5a5550;
+  color: var(--color-muted);
   line-height: 1.7;
   max-width: 52ch;
 }
@@ -63,7 +63,7 @@
   flex-direction: column;
   gap: 16px;
   border: 1px solid var(--color-stone);
-  box-shadow: 2px 4px 12px rgba(75, 46, 33, 0.08);
+  box-shadow: 2px 4px 12px rgba(42, 37, 41, 0.08);
 }
 
 .previewIcon {
@@ -130,7 +130,12 @@
   letter-spacing: 0.03em;
   color: var(--color-muted);
   opacity: 0.6;
-  transition: color var(--transition-base), opacity var(--transition-base);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .successBadge {
+    transition: color var(--transition-base), opacity var(--transition-base);
+  }
 }
 
 .successVisible {
@@ -172,9 +177,9 @@
   font-weight: 500;
   max-width: none;
   padding: 10px 16px;
-  background-color: #ecf7f1;
+  background-color: var(--color-success-bg);
   border-radius: var(--radius-sm);
-  border: 1px solid #b4dfc7;
+  border: 1px solid #B8DCBE;
 }
 
 @media (max-width: 768px) {

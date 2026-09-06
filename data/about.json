@@ -19,5 +19,7 @@
       "label": "To opportunities",
       "value": "Open"
     }
-  ]
+  ],
+  "image_url": "/about.jpg",
+  "profile_image_url": "/profile.jpg"
 }

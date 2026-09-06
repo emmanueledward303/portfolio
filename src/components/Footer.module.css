@@ -32,7 +32,7 @@
 
 .ctaBody {
   font-size: var(--text-base);
-  color: #E8DCA6;
+  color: #DCD7CD;
   line-height: 1.75;
   max-width: 52ch;
 }
@@ -47,10 +47,10 @@
 }
 
 .ctaBtn:hover {
-  background-color: #FAF4DE !important;
+  background-color: #FFFFFF !important;
   color: var(--color-brown-dark) !important;
-  border-color: #FAF4DE !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  border-color: #FFFFFF !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
 }
 
 /* =====================
@@ -58,7 +58,7 @@
    ===================== */
 .footer {
   background-color: var(--color-brown-dark);
-  border-top: 1px solid rgba(242, 230, 179, 0.15);
+  border-top: 1px solid rgba(243, 240, 231, 0.12);
   padding-block: 40px 32px;
   display: flex;
   flex-direction: column;
@@ -72,7 +72,7 @@
   gap: 24px;
   flex-wrap: wrap;
   padding-bottom: 28px;
-  border-bottom: 1px solid rgba(242, 230, 179, 0.12);
+  border-bottom: 1px solid rgba(243, 240, 231, 0.1);
 }
 
 .footerLeft {
@@ -90,7 +90,7 @@
 
 .footerRole {
   font-size: var(--text-sm);
-  color: #DAC98B;
+  color: #C8C2B8;
 }
 
 .footerLinks {
@@ -104,7 +104,7 @@
 .footerLink {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: #DAC98B;
+  color: #C8C2B8;
   text-decoration: none;
   letter-spacing: 0.02em;
   transition: color var(--transition-fast);
@@ -126,7 +126,7 @@
 
 .legal {
   font-size: var(--text-xs);
-  color: #B8A680;
+  color: #ADA69E;
   line-height: 1.5;
   max-width: none;
 }
@@ -139,14 +139,14 @@
 }
 
 .legalDivider {
-  color: rgba(184, 166, 128, 0.4);
+  color: rgba(243, 240, 231, 0.3);
   font-size: var(--text-xs);
   user-select: none;
 }
 
 .privacyLink {
   font-size: var(--text-xs);
-  color: #B8A680;
+  color: #ADA69E;
   transition: color var(--transition-fast);
   white-space: nowrap;
   flex-shrink: 0;
@@ -163,23 +163,22 @@
   gap: 6px;
   font-size: var(--text-xs);
   font-weight: 500;
-  color: #B8A680;
+  color: #ADA69E;
   text-decoration: none;
   padding: 4px 10px;
   border-radius: var(--radius-sm);
-  background-color: rgba(242, 230, 179, 0.06);
-  border: 1px solid rgba(242, 230, 179, 0.16);
-  transition: all var(--transition-fast);
+  background-color: rgba(243, 240, 231, 0.06);
+  border: 1px solid rgba(243, 240, 231, 0.16);
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
   cursor: pointer;
   letter-spacing: 0.02em;
 }
 
 .adminLockLink:hover {
   color: var(--color-paper);
-  background-color: rgba(242, 230, 179, 0.16);
-  border-color: rgba(242, 230, 179, 0.35);
+  background-color: rgba(243, 240, 231, 0.16);
+  border-color: rgba(243, 240, 231, 0.35);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transform: translateY(-1px);
 }
 
 .lockIcon {

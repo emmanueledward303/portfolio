@@ -116,6 +116,17 @@ export default function Projects() {
             {filteredProjects.map((project) => (
               <article key={project.id} className={`${styles.card} card-tab`} aria-label={project.title}>
                 <div className={styles.cardTop}>
+                  {project.image_url && (
+                    <div className={styles.cardImageWrapper}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={project.image_url}
+                        alt={`${project.title} screenshot`}
+                        className={styles.cardImage}
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
                   <div className={styles.cardMeta}>
                     <span className={styles.categoryBadge}>{project.category}</span>
                     {project.featured && (

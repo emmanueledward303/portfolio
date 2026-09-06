@@ -1,9 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Hero.module.css';
 
 export default function Hero() {
+  const [profileImage, setProfileImage] = useState('/profile.jpg');
+
+  useEffect(() => {
+    fetch('/api/about')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.profile_image_url) {
+          setProfileImage(data.profile_image_url);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <section id="home" className={styles.hero} aria-label="Introduction">
       <div className={`container ${styles.inner}`}>
@@ -33,7 +46,7 @@ export default function Hero() {
           <div className={styles.portraitFrame}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/profile.jpg"
+              src={profileImage}
               alt="Edward Emmanuel - Aspiring Data Analyst & Software Engineer"
               className={styles.portraitImg}
               width={340}
