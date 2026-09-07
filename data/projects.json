@@ -57,26 +57,5 @@
     "github_url": "https://github.com/emmanueledward303/football-recruitment-analyzer",
     "image_url": "",
     "featured": false
-  },
-  {
-    "id": "proj-1788630240673",
-    "created_at": "2026-09-05T17:44:00.673Z",
-    "title": "Personal Portfolio Website",
-    "tagline": "portfolio built with TypeScript and modern web UI  showcases projects, skills, and contact info",
-    "description": "This repository contains my personal portfolio website that presents my projects, technical skills, and a contact entry point for potential collaborators and employers.",
-    "category": "Full-Stack",
-    "tech_stack": [
-      "TypeScript",
-      "CSS",
-      "PLpgSQL",
-      "JavaScript",
-      "Next.js",
-      "Node.js",
-      "PostgreSQL"
-    ],
-    "demo_url": "",
-    "github_url": "https://github.com/emmanueledward303/portfolio",
-    "image_url": "",
-    "featured": false
   }
 ]
