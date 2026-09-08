@@ -4,11 +4,11 @@
     "created_at": "2026-09-07T21:10:48.176Z",
     "title": "HR Employee Attrition Analytics Dashboard",
     "tagline": "SQL Server data modeling and Power BI analysis identifying where employee attrition risk and cost are concentrated",
-    "description": "Built a full analytics pipeline on IBM's HR Employee Attrition dataset (1,470 employees) to answer where attrition risk is concentrated and what it costs the business. Designed a star-schema-lite in SQL Server (staging table plus normalized dimension and fact tables), validated data quality, and wrote SQL analysis using CTEs and window functions to surface patterns across department, job role, tenure, and salary. Found that attrition is not evenly distributed: it is concentrated among low-tenure, low-paid employees, with the highest-risk segment (under $3,000/month, 0-2 years tenure) showing 38.1% attrition versus a 16.1% company average. Built a parameterized stored procedure to estimate turnover cost by role, revealing that the highest attrition-rate role (Sales Representative) is not the same as the highest-cost role (Sales Executive). Delivered findings as an interactive three-page Power BI dashboard with KPI cards, breakdown charts, and a salary x tenure heatmap matrix.",
+    "description": "I analyzed employee data for a company to figure out who was quitting and why. I found that new employees earning under $3,000 a month were leaving at more than double the average rate  38% versus 16% company-wide. I then calculated the actual cost of these exits by role, and found something managers wouldn't expect: the role with the most people quitting wasn't the role costing the company the most money a different, more senior role was. I put all of this into an interactive dashboard so managers could see exactly where the risk and the cost were, without needing to touch any code.\n\nTo view work click source code below 👇🏿",
     "category": "Data Analytics",
     "tech_stack": [
       "SQL Server",
-      "T-SQL",
+      "SQL",
       "Power BI",
       "DAX"
     ],
