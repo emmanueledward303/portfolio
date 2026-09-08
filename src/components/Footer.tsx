@@ -15,7 +15,7 @@ export default function Footer() {
         {/* Left */}
         <div className={styles.footerLeft}>
           <span className={styles.footerName}>Edward Emmanuel</span>
-          <span className={styles.footerRole}>&nbsp;Aspiring Data Analyst &amp; Software Engineer</span>
+          <span className={styles.footerRole}>Data Analyst &amp; Software Engineer</span>
         </div>
 
         {/* Right: contact links */}

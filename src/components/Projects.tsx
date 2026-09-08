@@ -34,8 +34,34 @@ function GitHubIcon() {
   );
 }
 
+/**
+ * Static placeholder projects rendered while the API loads or if it is
+ * unavailable. Keeps the section visually complete for every visitor.
+ */
+const FALLBACK_PROJECTS: Project[] = [
+  {
+    id: 'fallback-1',
+    title: 'Portfolio Website',
+    tagline: 'The site you are viewing right now.',
+    description:
+      'A personal portfolio built with Next.js 15, TypeScript, and vanilla CSS. Features an admin CMS, dynamic sections, and responsive design.',
+    category: 'Web Development',
+    tech_stack: ['Next.js', 'TypeScript', 'Python', 'PostgreSQL'],
+    featured: true,
+  },
+  {
+    id: 'fallback-2',
+    title: 'Data Analytics Dashboard',
+    tagline: 'Turning spreadsheets into decisions.',
+    description:
+      'Interactive BI dashboard built to surface KPIs from raw CSV exports. Automated ETL pipeline with Python + Pandas, visualised in a React frontend.',
+    category: 'Data & Analytics',
+    tech_stack: ['Python', 'Pandas', 'React', 'SQL'],
+  },
+];
+
 export default function Projects() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>(FALLBACK_PROJECTS);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
@@ -44,11 +70,17 @@ export default function Projects() {
     fetch('/api/projects')
       .then((res) => res.json())
       .then((data) => {
-        if (isMounted && Array.isArray(data)) {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          // Real projects available — replace the fallback content.
           setProjects(data);
         }
+        // An empty array or non-array response keeps the current projects
+        // displayed so the grid never appears blank.
       })
-      .catch((err) => console.error('Failed to load projects:', err))
+      .catch((err) => {
+        console.warn('Projects: /api/projects fetch failed — keeping current projects.', err);
+        // Do NOT clear projects on error; the fallback stays visible.
+      })
       .finally(() => {
         if (isMounted) setLoading(false);
       });

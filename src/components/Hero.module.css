@@ -85,19 +85,16 @@
 }
 
 /* Responsive */
-@media (max-width: 900px) {
+@media (max-width: 900px) and (min-width: 641px) {
   .inner {
-    grid-template-columns: 1fr;
-  }
-
-  .portrait {
-    order: -1;
-    justify-content: center;
+    grid-template-columns: 1fr 240px;
+    gap: 24px;
+    align-items: center;
   }
 
   .portraitFrame {
-    width: 240px;
-    height: 280px;
+    width: 220px;
+    height: 260px;
   }
 
   .portraitAccent {
@@ -105,22 +102,90 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .hero {
-    padding-block: clamp(40px, 8vw, 64px);
+    padding-block: clamp(24px, 6vw, 36px);
+  }
+
+  .inner {
+    grid-template-columns: minmax(0, 1.15fr) minmax(120px, 145px);
+    gap: 12px;
+    align-items: center;
+  }
+
+  .copy {
+    min-width: 0;
+  }
+
+  .greeting {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--color-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
   }
 
   .name {
-    font-size: clamp(2rem, 8vw, 2.8rem);
+    font-size: clamp(1.65rem, 6.2vw, 1.95rem);
+    line-height: 1.1;
+    margin-bottom: 6px;
+    word-break: normal;
+  }
+
+  .tagline {
+    font-size: clamp(0.76rem, 3.2vw, 0.86rem);
+    line-height: 1.35;
+    color: var(--color-muted);
+    margin-bottom: 10px;
+  }
+
+  .intro {
+    font-size: clamp(0.68rem, 2.9vw, 0.76rem);
+    line-height: 1.55;
+    margin-bottom: 14px;
+    max-width: 100%;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 6px;
+    width: auto;
+  }
+
+  .actions :global(.btn) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    font-size: clamp(0.64rem, 2.7vw, 0.72rem);
+    min-height: 34px;
+    min-width: auto;
+    border-radius: 4px;
+    border-width: 1px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    line-height: 1.2;
+    box-shadow: none;
   }
 
   .portrait {
-    justify-content: center;
+    order: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-self: center;
   }
 
   .portraitFrame {
-    width: 200px;
-    height: 240px;
+    width: 100%;
+    max-width: 142px;
+    height: auto;
+    aspect-ratio: 4 / 4.7;
+    border-radius: 14px;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
   }
 
   .portraitAccent {
@@ -128,15 +193,24 @@
   }
 }
 
-@media (max-width: 480px) {
-  .actions {
-    flex-direction: column;
-    width: 100%;
+@media (max-width: 380px) {
+  .inner {
+    grid-template-columns: minmax(0, 1.1fr) minmax(105px, 125px);
+    gap: 8px;
   }
 
-  .actions .btn {
-    text-align: center;
-    justify-content: center;
-    width: 100%;
+  .portraitFrame {
+    max-width: 122px;
+    border-radius: 10px;
+  }
+
+  .actions {
+    gap: 4px;
+  }
+
+  .actions :global(.btn) {
+    padding: 5px 8px;
+    font-size: 0.62rem;
+    min-height: 32px;
   }
 }

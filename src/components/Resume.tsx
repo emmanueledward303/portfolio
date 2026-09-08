@@ -51,11 +51,20 @@ function FileIcon() {
   );
 }
 
+/** Format today's date as e.g. "Sep 8, 2026" — used as the fallback last_updated value. */
+function todayLabel(): string {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date());
+}
+
 export default function Resume() {
   const [meta, setMeta] = useState<ResumeMeta>({
     file_url: '/resume.pdf',
     file_name: 'Edward_Emmanuel_Resume.pdf',
-    last_updated: 'Oct 17, 2023',
+    last_updated: todayLabel(),
   });
 
   useEffect(() => {

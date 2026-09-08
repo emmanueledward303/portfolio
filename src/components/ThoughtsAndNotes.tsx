@@ -13,8 +13,37 @@ interface BlogPost {
   slug: string;
 }
 
+/**
+ * Static placeholder articles shown when the /api/blog endpoint is unavailable
+ * or has not yet returned data. Prevents the section from ever appearing blank.
+ */
+const FALLBACK_POSTS: BlogPost[] = [
+  {
+    id: 'fallback-1',
+    title: 'From Raw Data to Real Decisions',
+    excerpt:
+      'How I approach messy datasets — cleaning, transforming, and surfacing the signal that actually matters for decision-making.',
+    content:
+      'Data rarely arrives clean. The pipeline from raw CSV to actionable insight involves careful validation, thoughtful transformation, and honest communication of uncertainty. In this post I walk through the workflow I have refined over dozens of projects.',
+    date: 'Coming soon',
+    read_time: '5 min read',
+    slug: 'raw-data-to-decisions',
+  },
+  {
+    id: 'fallback-2',
+    title: 'Building Full-Stack Apps as a Solo Developer',
+    excerpt:
+      'Lessons learned shipping production-grade Next.js + Python backends without a team — architecture decisions, trade-offs, and what I would do differently.',
+    content:
+      'Solo full-stack development forces you to think deeply about every layer of the stack. From database schema design to deployment pipelines, every decision lands on one set of shoulders. Here are the patterns that have served me best.',
+    date: 'Coming soon',
+    read_time: '7 min read',
+    slug: 'solo-fullstack-lessons',
+  },
+];
+
 export default function ThoughtsAndNotes() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>(FALLBACK_POSTS);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,10 +52,20 @@ export default function ThoughtsAndNotes() {
       fetch('/api/blog')
         .then((res) => res.json())
         .then((data) => {
-          if (Array.isArray(data)) setPosts(data);
+          if (Array.isArray(data) && data.length > 0) {
+            // Real posts available — replace the fallback content.
+            setPosts(data);
+          }
+          // If data is an empty array or non-array, keep whatever is already
+          // displayed (fallback or a previously loaded set) so the section
+          // never goes blank mid-session.
         })
-        .catch(() => {
-          /* silently fail */
+        .catch((err) => {
+          console.warn(
+            'ThoughtsAndNotes: /api/blog fetch failed — keeping current posts.',
+            err,
+          );
+          // Do NOT clear posts on error; the fallback / previous data stays visible.
         })
         .finally(() => setLoading(false));
     };

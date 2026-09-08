@@ -102,14 +102,13 @@ export default function Header() {
         </div>
 
         <nav className={styles.drawerNav} aria-label="Mobile navigation links">
-          {NAV_LINKS.map((link, index) => (
+          {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
               className={styles.drawerLink}
               onClick={() => setMenuOpen(false)}
             >
-              <span className={styles.drawerLinkIndex}>0{index + 1}</span>
               <span className={styles.drawerLinkLabel}>{link.label}</span>
             </a>
           ))}
