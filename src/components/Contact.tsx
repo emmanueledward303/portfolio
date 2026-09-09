@@ -53,14 +53,31 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('sending');
     setErrorMsg('');
+
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+      setErrorMsg('Please fill out all fields before submitting.');
+      setStatus('error');
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setErrorMsg('Please provide a valid email address.');
+      setStatus('error');
+      return;
+    }
+
+    setStatus('sending');
 
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          message: form.message.trim(),
+        }),
       });
 
       const data = await res.json();
@@ -140,7 +157,7 @@ export default function Contact() {
                 </svg>
                 <h3 className={styles.successTitle}>Message sent!</h3>
                 <p className={styles.successBody}>
-                  Thanks for reaching out  I&apos;ll get back to you within 24 hours.
+                  Thanks for reaching out — I&apos;ll get back to you within 24 hours.
                 </p>
                 <button
                   className="btn btn-outline"

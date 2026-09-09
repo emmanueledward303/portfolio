@@ -64,8 +64,69 @@ function getCategoryIcon(slug: string) {
   }
 }
 
+const FALLBACK_CATEGORIES: TechCategory[] = [
+  {
+    id: 'cat-frontend',
+    name: 'Frontend Engineering',
+    slug: 'frontend',
+    icon_name: 'FrontendIcon',
+    skills: [
+      { name: 'React' },
+      { name: 'Next.js' },
+      { name: 'TypeScript' },
+      { name: 'JavaScript' },
+      { name: 'TailwindCSS' },
+      { name: 'HTML5 & CSS3' },
+    ],
+  },
+  {
+    id: 'cat-backend',
+    name: 'Backend & Systems',
+    slug: 'backend',
+    icon_name: 'BackendIcon',
+    skills: [
+      { name: 'Node.js' },
+      { name: 'Express' },
+      { name: 'Python' },
+      { name: 'REST APIs' },
+      { name: 'PostgreSQL' },
+      { name: 'Supabase' },
+    ],
+  },
+  {
+    id: 'cat-data',
+    name: 'Data & Analytics',
+    slug: 'data',
+    icon_name: 'DataIcon',
+    skills: [
+      { name: 'SQL Analytics' },
+      { name: 'Pandas' },
+      { name: 'NumPy' },
+      { name: 'Data Modeling' },
+      { name: 'ETL Pipelines' },
+      { name: 'Power BI' },
+      { name: 'Excel' },
+      { name: 'Jupyter Notebook' },
+    ],
+  },
+  {
+    id: 'cat-tools',
+    name: 'Tools & DevOps',
+    slug: 'tools',
+    icon_name: 'ToolsIcon',
+    skills: [
+      { name: 'Git' },
+      { name: 'GitHub' },
+      { name: 'SQL Server Management Studio' },
+      { name: 'Vercel' },
+      { name: 'VS Code' },
+      { name: 'Claude Code' },
+    ],
+  },
+];
+
 export default function TechStack() {
-  const [categories, setCategories] = useState<TechCategory[]>([]);
+  const [categories, setCategories] = useState<TechCategory[]>(FALLBACK_CATEGORIES);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -73,7 +134,7 @@ export default function TechStack() {
     fetch('/api/tech-stack')
       .then((res) => res.json())
       .then((data) => {
-        if (isMounted && Array.isArray(data)) {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
           setCategories(data);
         }
       })
@@ -98,7 +159,7 @@ export default function TechStack() {
           </p>
         </div>
 
-        {loading ? (
+        {loading && categories.length === 0 ? (
           <div className={styles.grid} role="status" aria-label="Loading tech stack">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className={`${styles.card} ${styles.skeletonCard}`}>

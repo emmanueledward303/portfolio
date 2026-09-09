@@ -232,6 +232,7 @@ const CACHE_TTL_MS = 60 * 1000; // 1 minute fresh TTL before re-checking GitHub
 const DATA_DIR = path.join(process.cwd(), 'data');
 const PROJECTS_FILE = path.join(DATA_DIR, 'projects.json');
 const BLOG_FILE = path.join(DATA_DIR, 'blog_posts.json');
+const RESUME_FILE = path.join(DATA_DIR, 'resume.json');
 
 function ensureDataDir() {
   try {
@@ -296,13 +297,39 @@ function writeBlogPostsToFile(posts: BlogPost[]): boolean {
   }
 }
 
+function readResumeFromFile(): ResumeMeta {
+  try {
+    ensureDataDir();
+    if (fs.existsSync(RESUME_FILE)) {
+      const raw = fs.readFileSync(RESUME_FILE, 'utf-8');
+      if (raw.trim()) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.file_url) return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('readResumeFromFile notice:', err);
+  }
+  return {
+    file_url: '/resume.pdf',
+    file_name: 'Edward_Emmanuel_Resume.pdf',
+    last_updated: 'Current',
+  };
+}
+
+function writeResumeToFile(meta: ResumeMeta): boolean {
+  try {
+    ensureDataDir();
+    fs.writeFileSync(RESUME_FILE, JSON.stringify(meta, null, 2), 'utf-8');
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
 const inMemoryCertificates: Certificate[] = [...defaultCertificates];
 
-let runtimeResumeMeta: ResumeMeta = {
-  file_url: '/resume.pdf',
-  file_name: 'Edward_Emmanuel_Resume.pdf',
-  last_updated: 'Current',
-};
+let runtimeResumeMeta: ResumeMeta = readResumeFromFile();
 
 // ---------------------------------------------------------------------------
 // Projects
@@ -783,22 +810,50 @@ export async function getTechStack(): Promise<TechCategory[]> {
 // Resume Meta
 // ---------------------------------------------------------------------------
 
-export async function getResumeMeta(): Promise<ResumeMeta> {
+export async function getResumeMeta(req?: Request): Promise<ResumeMeta> {
+  // 1. If Supabase is configured, try Supabase safely
   if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('resume_meta')
-      .select('file_url, file_name, last_updated')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
-    if (error || !data) return runtimeResumeMeta;
-    return data as ResumeMeta;
+    try {
+      const { data, error } = await supabase
+        .from('resume_meta')
+        .select('file_url, file_name, last_updated')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+      if (!error && data) {
+        runtimeResumeMeta = data as ResumeMeta;
+        writeResumeToFile(runtimeResumeMeta);
+        return runtimeResumeMeta;
+      }
+    } catch (e) {
+      console.warn('Supabase getResumeMeta notice:', e);
+    }
   }
+
+  // 2. Try GitHub sync if token available
+  const token = await resolveGitHubToken(req);
+  if (token) {
+    try {
+      const ghRes = await fetchFileFromGitHub<ResumeMeta>('data/resume.json', token);
+      if (ghRes?.data?.file_url) {
+        runtimeResumeMeta = ghRes.data;
+        writeResumeToFile(runtimeResumeMeta);
+        return runtimeResumeMeta;
+      }
+    } catch (e) {
+      console.warn('GitHub getResumeMeta notice:', e);
+    }
+  }
+
+  // 3. Fallback to local file or memory
+  const fileMeta = readResumeFromFile();
+  runtimeResumeMeta = { ...runtimeResumeMeta, ...fileMeta };
   return runtimeResumeMeta;
 }
 
 export async function setRuntimeResumeMeta(meta: ResumeMeta): Promise<ResumeMeta> {
-  runtimeResumeMeta = meta;
+  runtimeResumeMeta = { ...runtimeResumeMeta, ...meta };
+  writeResumeToFile(runtimeResumeMeta);
   return runtimeResumeMeta;
 }
 

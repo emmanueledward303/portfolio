@@ -14,7 +14,7 @@ export default function Hero() {
           setProfileImage(data.profile_image_url);
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   return (
@@ -26,7 +26,7 @@ export default function Hero() {
           <h1 className={styles.name}>Edward Emmanuel</h1>
           <p className={styles.tagline}>Data Analyst &amp; Software Engineer</p>
           <p className={styles.intro}>
-            I dig through spreadsheets and messy datasets until they tell me what's actually true,
+            I dig through spreadsheets and messy datasets until they tell me what&apos;s actually true,
             then ship the dashboard or app that puts it in front of people.
             Based in Nigeria, open to remote and hybrid work worldwide.
           </p>

@@ -44,7 +44,7 @@ const FALLBACK_PROJECTS: Project[] = [
     title: 'Portfolio Website',
     tagline: 'The site you are viewing right now.',
     description:
-      'A personal portfolio built with Next.js 15, TypeScript, and vanilla CSS. Features an admin CMS, dynamic sections, and responsive design.',
+      'A personal portfolio built with Next.js, TypeScript, and vanilla CSS. Features an admin CMS, dynamic sections, and responsive design.',
     category: 'Web Development',
     tech_stack: ['Next.js', 'TypeScript', 'Python', 'PostgreSQL'],
     featured: true,
@@ -127,7 +127,7 @@ export default function Projects() {
           </div>
         )}
 
-        {loading ? (
+        {loading && projects.length === 0 ? (
           <div className={styles.grid} role="status" aria-label="Loading projects">
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className={`${styles.card} ${styles.skeletonCard}`}>
@@ -140,7 +140,7 @@ export default function Projects() {
             ))}
           </div>
         ) : filteredProjects.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#5a5550' }}>
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--color-muted)' }}>
             <p>No projects found in this category.</p>
           </div>
         ) : (

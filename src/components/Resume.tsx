@@ -130,7 +130,7 @@ export default function Resume() {
             </div>
 
             <p style={{ color: 'var(--color-muted)', fontSize: '0.925rem', lineHeight: '1.6' }}>
-              A resume is a concise summary of your skills, experiences, and accomplishments. It highlights your qualifications and achievements to potential employers.
+              Comprehensive breakdown of my software engineering experience, data analytics workflows, production deliverables, and technical competencies.
             </p>
 
             <div className={styles.actions}>

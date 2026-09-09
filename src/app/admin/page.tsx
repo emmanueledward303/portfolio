@@ -492,8 +492,13 @@ export default function AdminPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
-      setResumeErrorMsg('Only PDF files are supported.');
+    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+      setResumeErrorMsg('Only PDF files are supported (.pdf).');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setResumeErrorMsg('File exceeds 10MB limit. Please compress your PDF before uploading.');
       return;
     }
 
@@ -510,21 +515,36 @@ export default function AdminPage() {
         body: formData,
       });
 
-      const result = await res.json();
+      let result: any = null;
+      try {
+        result = await res.json();
+      } catch {
+        // Non-JSON response (e.g. 413 Payload Too Large from host)
+      }
+
       if (!res.ok) {
-        throw new Error(result.error || 'Failed to upload resume');
+        if (res.status === 413) {
+          throw new Error('File exceeds server payload limit. Please compress your PDF to under 4.5MB.');
+        }
+        throw new Error(result?.error || `Upload failed (Status: ${res.status})`);
       }
 
       setResumeMeta({
-        file_url: result.file_url || '/resume.pdf',
-        file_name: result.file_name || file.name,
-        last_updated: result.last_updated,
+        file_url: result?.file_url || '/resume.pdf',
+        file_name: result?.file_name || file.name,
+        last_updated: result?.last_updated,
       });
       setResumeSuccessMsg('Resume replaced successfully! It is now active on your portfolio.');
     } catch (err: any) {
-      setResumeErrorMsg(err.message || 'Upload failed.');
+      const msg = err?.message || 'Upload failed.';
+      if (msg.includes('Failed to fetch') || msg.includes('fetch failed') || msg.includes('NetworkError')) {
+        setResumeErrorMsg('Unable to connect to upload service. Please check your internet connection or verify your file is a valid PDF under 5MB.');
+      } else {
+        setResumeErrorMsg(msg);
+      }
     } finally {
       setResumeUploading(false);
+      e.target.value = '';
     }
   };
 

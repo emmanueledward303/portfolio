@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { isRequestAuthorized } from '@/lib/adminAuth';
 
 export async function POST(req: Request) {
   try {

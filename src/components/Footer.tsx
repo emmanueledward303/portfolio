@@ -14,7 +14,10 @@ export default function Footer() {
       <div className={`container ${styles.footerInner}`}>
         {/* Left */}
         <div className={styles.footerLeft}>
-          <span className={styles.footerName}>Edward Emmanuel</span>
+          <a href="#home" className={styles.footerBrand} aria-label="Edward Emmanuel - back to top">
+            <span className={styles.logoMark}>EE</span>
+            <span className={styles.footerName}>Edward Emmanuel</span>
+          </a>
           <span className={styles.footerRole}>Data Analyst &amp; Software Engineer</span>
         </div>
 
@@ -40,7 +43,7 @@ export default function Footer() {
       {/* Legal */}
       <div className={`container ${styles.legalRow}`}>
         <p className={styles.legal}>
-          &copy; {new Date().getFullYear()} Edward Emmanuel. All rights reserved.
+          &copy; {new Date().getFullYear()} <span className={styles.legalName}>Edward Emmanuel</span>. All rights reserved.
         </p>
         <div className={styles.legalRight}>
           <Link href="/privacy" className={styles.privacyLink}>Privacy Policy</Link>

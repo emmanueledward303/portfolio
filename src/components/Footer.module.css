@@ -78,19 +78,51 @@
 .footerLeft {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+}
+
+.footerBrand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.footerBrand:hover {
+  opacity: 0.9;
+}
+
+.logoMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: #FAF8F4;
+  color: #1A1619;
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
 }
 
 .footerName {
-  font-family: var(--font-body);
-  font-size: var(--text-base);
-  font-weight: 600;
-  color: var(--color-paper);
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: 700;
+  color: #FFFFFF !important;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
 }
 
 .footerRole {
   font-size: var(--text-sm);
   color: #C8C2B8;
+  letter-spacing: 0.01em;
 }
 
 .footerLinks {
@@ -129,6 +161,11 @@
   color: #ADA69E;
   line-height: 1.5;
   max-width: none;
+}
+
+.legalName {
+  color: #FFFFFF;
+  font-weight: 600;
 }
 
 .legalRight {
@@ -255,4 +292,33 @@
   background-color: #FFFFFF !important;
   color: #000000 !important;
   border-color: #FFFFFF !important;
+}
+
+/* Fix footer name visibility in dark/inverted mode.
+   Ensure absolute clarity and high contrast against the dark footer background (#0E0D0F). */
+:global([data-theme="dark"]) .footerName {
+  color: #FFFFFF !important;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+:global([data-theme="dark"]) .logoMark {
+  background-color: var(--color-brown);
+  color: #141214;
+}
+
+:global([data-theme="dark"]) .legalName {
+  color: #FAF8F4;
+}
+
+:global([data-theme="dark"]) .footerRole {
+  color: #CDC7B9;
+}
+
+@media (prefers-color-scheme: dark) {
+  .footerName {
+    color: #FFFFFF !important;
+  }
+  .legalName {
+    color: #FAF8F4;
+  }
 }

@@ -90,7 +90,7 @@ export default function ThoughtsAndNotes() {
         </div>
 
         {/* Posts Display */}
-        {loading ? (
+        {loading && posts.length === 0 ? (
           <div className={styles.emptyState}>
             <p>Loading articles...</p>
           </div>
