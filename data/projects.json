@@ -4,7 +4,7 @@
     "created_at": "2026-09-07T21:10:48.176Z",
     "title": "HR Employee Attrition Analytics Dashboard",
     "tagline": "SQL Server data modeling and Power BI analysis identifying where employee attrition risk and cost are concentrated",
-    "description": "I analyzed employee data for a company to figure out who was quitting and why. I found that new employees earning under $3,000 a month were leaving at more than double the average rate  38% versus 16% company-wide. I then calculated the actual cost of these exits by role, and found something managers wouldn't expect: the role with the most people quitting wasn't the role costing the company the most money a different, more senior role was. I put all of this into an interactive dashboard so managers could see exactly where the risk and the cost were, without needing to touch any code.\n\nTo view work click source code below 👇🏿",
+    "description": "I analyzed employee data for a company to figure out who was quitting and why. I found that new employees earning under $3,000 a month were leaving at more than double the average rate  38% versus 16% company-wide. I then calculated the actual cost of these exits by role, and found something managers wouldn't expect: the role with the most people quitting wasn't the role costing the company the most money a different, more senior role was. I put all of this into an interactive dashboard so managers could see exactly where the risk and the cost were, without needing to touch any code.\n\n\n\n\n\nTo view work click source code below",
     "category": "Data Analytics",
     "tech_stack": [
       "SQL Server",
