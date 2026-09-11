@@ -76,7 +76,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     console.error('[Contact API error]', err);
     return NextResponse.json(
-      { error: err?.message || 'Failed to deliver message. Please try again.' },
+      { error: 'Email dispatch is temporarily unavailable. Please reach out directly to emmanueledward303@gmail.com' },
       { status: 500 }
     );
   }

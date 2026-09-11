@@ -330,6 +330,15 @@ function writeResumeToFile(meta: ResumeMeta): boolean {
 const inMemoryCertificates: Certificate[] = [...defaultCertificates];
 
 let runtimeResumeMeta: ResumeMeta = readResumeFromFile();
+let runtimeResumeBuffer: Buffer | null = null;
+
+export function setRuntimeResumeBuffer(buf: Buffer): void {
+  runtimeResumeBuffer = buf;
+}
+
+export function getRuntimeResumeBuffer(): Buffer | null {
+  return runtimeResumeBuffer;
+}
 
 // ---------------------------------------------------------------------------
 // Projects

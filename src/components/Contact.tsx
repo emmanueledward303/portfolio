@@ -80,10 +80,15 @@ export default function Contact() {
         }),
       });
 
-      const data = await res.json();
+      let data: any = null;
+      try {
+        data = await res.json();
+      } catch {
+        // Non-JSON response from server/proxy
+      }
 
       if (!res.ok) {
-        setErrorMsg(data.error || 'Something went wrong.');
+        setErrorMsg(data?.error || 'Failed to deliver message. Please try again or contact directly via email.');
         setStatus('error');
         return;
       }

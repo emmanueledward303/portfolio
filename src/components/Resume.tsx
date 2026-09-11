@@ -135,8 +135,12 @@ export default function Resume() {
 
             <div className={styles.actions}>
               <a
-                href={meta.file_url}
-                download={meta.file_name}
+                href={
+                  meta.file_url
+                    ? `${meta.file_url}${meta.file_url.includes('?') ? '&' : '?'}download=1`
+                    : '/api/resume/download?download=1'
+                }
+                download={meta.file_name || 'Edward_Emmanuel_Resume.pdf'}
                 className="btn btn-primary"
                 aria-label="Download resume PDF"
               >
@@ -145,7 +149,7 @@ export default function Resume() {
               </a>
 
               <a
-                href={meta.file_url}
+                href={meta.file_url || '/api/resume/download'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-outline"

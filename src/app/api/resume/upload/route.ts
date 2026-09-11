@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getResumeMeta, setRuntimeResumeMeta, ResumeMeta } from '@/lib/db';
+import { getResumeMeta, setRuntimeResumeMeta, setRuntimeResumeBuffer, ResumeMeta } from '@/lib/db';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { isRequestAuthorized } from '@/lib/adminAuth';
 import { resolveGitHubToken, commitFileToGitHub } from '@/lib/githubSync';
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const fileName = file.name || 'resume.pdf';
+    const fileName = file.name || 'Edward_Emmanuel_Resume.pdf';
     const now = new Date();
     const formattedDate = now.toLocaleDateString('en-US', {
       month: 'short',
@@ -53,12 +53,16 @@ export async function POST(req: Request) {
       year: 'numeric',
     });
 
-    let activeFileUrl = '/resume.pdf';
+    // 1. Cache buffer in memory for instant serving
+    setRuntimeResumeBuffer(buffer);
 
-    // 1. If Supabase is connected, attempt storage upload gracefully
+    let activeFileUrl = `/api/resume/download?v=${Date.now()}`;
+
+    // 2. If Supabase is connected, attempt storage upload gracefully
     if (isSupabaseConfigured && supabase) {
       try {
-        const storagePath = `resumes/${Date.now()}-${fileName}`;
+        const sanitized = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const storagePath = `resumes/${Date.now()}-${sanitized}`;
         const { error: uploadError } = await supabase.storage
           .from('resumes')
           .upload(storagePath, buffer, {
@@ -79,7 +83,7 @@ export async function POST(req: Request) {
           try {
             await supabase
               .from('resume_meta')
-              .insert([{ file_url: activeFileUrl, file_name: fileName, last_updated: now.toISOString() }]);
+              .insert([{ file_url: activeFileUrl, file_name: fileName, last_updated: formattedDate }]);
           } catch (dbErr) {
             console.warn('Supabase resume_meta insert warning:', dbErr);
           }
@@ -91,16 +95,28 @@ export async function POST(req: Request) {
       }
     }
 
-    // 2. Try writing locally to public/resume.pdf
+    // 3. Write locally to data/resume.pdf and public/resume.pdf
+    try {
+      const dataDir = path.join(process.cwd(), 'data');
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      await fs.promises.writeFile(path.join(dataDir, 'resume.pdf'), buffer);
+    } catch (dataWriteErr) {
+      console.warn('Local data/resume.pdf write notice:', dataWriteErr);
+    }
+
     try {
       const publicDir = path.join(process.cwd(), 'public');
-      const targetPath = path.join(publicDir, 'resume.pdf');
-      await fs.promises.writeFile(targetPath, buffer);
+      if (!fs.existsSync(publicDir)) {
+        fs.mkdirSync(publicDir, { recursive: true });
+      }
+      await fs.promises.writeFile(path.join(publicDir, 'resume.pdf'), buffer);
     } catch {
       // Expected on read-only serverless lambdas (Vercel)
     }
 
-    // 3. Update runtime metadata & local data/resume.json
+    // 4. Update runtime metadata & local data/resume.json
     const updatedMeta: ResumeMeta = {
       file_url: activeFileUrl,
       file_name: fileName,
@@ -108,10 +124,10 @@ export async function POST(req: Request) {
     };
     await setRuntimeResumeMeta(updatedMeta);
 
-    // 4. If GitHub token is present, commit files directly to GitHub
+    // 5. If GitHub token is present, commit files directly to GitHub
     const token = await resolveGitHubToken(req);
     if (token) {
-      // Always commit resume.pdf
+      // Commit resume.pdf
       const commitPdfRes = await commitFileToGitHub(
         'public/resume.pdf',
         buffer,
@@ -138,6 +154,7 @@ export async function POST(req: Request) {
       success: true,
       ...updatedMeta,
     });
+
   } catch (err: any) {
     console.error('Resume upload error:', err);
     return NextResponse.json(

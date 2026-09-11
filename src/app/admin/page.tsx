@@ -140,6 +140,8 @@ export default function AdminPage() {
   const [resumeUploading, setResumeUploading] = useState(false);
   const [resumeSuccessMsg, setResumeSuccessMsg] = useState<string | null>(null);
   const [resumeErrorMsg, setResumeErrorMsg] = useState<string | null>(null);
+  const [isResumeDragging, setIsResumeDragging] = useState(false);
+  const resumeInputRef = React.useRef<HTMLInputElement | null>(null);
 
   // Blog state
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
@@ -488,8 +490,7 @@ export default function AdminPage() {
   };
 
   // Handlers: Upload Resume
-  const handleResumeUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const processResumeFile = async (file: File) => {
     if (!file) return;
 
     if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
@@ -529,22 +530,32 @@ export default function AdminPage() {
         throw new Error(result?.error || `Upload failed (Status: ${res.status})`);
       }
 
+      const activeUrl = result?.file_url || `/api/resume/download?v=${Date.now()}`;
       setResumeMeta({
-        file_url: result?.file_url || '/resume.pdf',
+        file_url: activeUrl,
         file_name: result?.file_name || file.name,
         last_updated: result?.last_updated,
       });
-      setResumeSuccessMsg('Resume replaced successfully! It is now active on your portfolio.');
+      setResumeSuccessMsg(`Resume "${result?.file_name || file.name}" uploaded successfully! It is now active across your portfolio.`);
     } catch (err: any) {
       const msg = err?.message || 'Upload failed.';
       if (msg.includes('Failed to fetch') || msg.includes('fetch failed') || msg.includes('NetworkError')) {
-        setResumeErrorMsg('Unable to connect to upload service. Please check your internet connection or verify your file is a valid PDF under 5MB.');
+        setResumeErrorMsg('Unable to connect to upload service. Please check your internet connection or verify your file is a valid PDF under 10MB.');
       } else {
         setResumeErrorMsg(msg);
       }
     } finally {
       setResumeUploading(false);
-      e.target.value = '';
+      if (resumeInputRef.current) {
+        resumeInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processResumeFile(file);
     }
   };
 
@@ -1694,31 +1705,75 @@ export default function AdminPage() {
                 )}
 
                 {/* File Dropzone */}
-                <label className={styles.dropzone} htmlFor="admin-resume-upload">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--color-brown)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <div
+                  className={`${styles.dropzone} ${isResumeDragging ? styles.dropzoneActive : ''}`}
+                  onClick={() => resumeInputRef.current?.click()}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!resumeUploading) setIsResumeDragging(true);
+                  }}
+                  onDragEnter={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (!resumeUploading) setIsResumeDragging(true);
+                  }}
+                  onDragLeave={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsResumeDragging(false);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsResumeDragging(false);
+                    if (resumeUploading) return;
+                    const file = e.dataTransfer.files?.[0];
+                    if (file) {
+                      processResumeFile(file);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      resumeInputRef.current?.click();
+                    }
+                  }}
+                  aria-label="Upload PDF resume by clicking or dragging and dropping"
+                >
+                  <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="var(--color-brown)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
                   <div>
-                    <p style={{ fontWeight: 700, color: 'var(--color-black)' }}>
-                      {resumeUploading ? 'Uploading & Deploying Resume...' : 'Click to select or drop new PDF resume'}
+                    <p style={{ fontWeight: 700, color: 'var(--color-black)', fontSize: '0.95rem' }}>
+                      {resumeUploading
+                        ? '⏳ Uploading & Deploying Resume...'
+                        : isResumeDragging
+                        ? 'Drop your PDF resume file here'
+                        : 'Click to select or drag & drop new PDF resume'}
                     </p>
                     <p style={{ fontSize: '0.8rem', color: 'var(--color-muted)', marginTop: '4px' }}>
-                      Replaces the live document immediately across the portfolio.
+                      Supports .pdf files up to 10MB. Replaces the live document immediately across your portfolio.
                     </p>
                   </div>
-                  <input
-                    id="admin-resume-upload"
-                    type="file"
-                    accept="application/pdf"
-                    style={{ display: 'none' }}
-                    onChange={handleResumeUpload}
-                    disabled={resumeUploading}
-                  />
-                </label>
+                </div>
+
+                <input
+                  ref={resumeInputRef}
+                  id="admin-resume-upload"
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  style={{ display: 'none' }}
+                  onChange={handleResumeUpload}
+                  disabled={resumeUploading}
+                />
               </div>
             </div>
+
           )}
 
           {/* TAB 3.5: MEDIA & IMAGES MANAGER */}
