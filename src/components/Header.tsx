@@ -4,13 +4,13 @@ import React, { useState, useEffect } from 'react';
 import styles from './Header.module.css';
 
 const NAV_LINKS = [
-  { href: '#home',         label: 'Home' },
-  { href: '#about',        label: 'About' },
-  { href: '#thoughts',     label: 'Thoughts & Notes' },
-  { href: '#projects',     label: 'Side Projects' },
-  { href: '#tech-stack',   label: 'Tech Stack' },
-  { href: '#resume',       label: 'Resume' },
-  { href: '#contact',      label: 'Contact' },
+  { href: '#home', label: 'Home' },
+  { href: '#about', label: 'About' },
+  { href: '#thoughts', label: 'Thoughts & Notes' },
+  { href: '#projects', label: 'Side Projects' },
+  { href: '#tech-stack', label: 'Tech Stack' },
+  { href: '#resume', label: 'Resume' },
+  { href: '#contact', label: 'Contact' },
 ];
 
 export default function Header() {
@@ -30,7 +30,7 @@ export default function Header() {
     document.documentElement.setAttribute('data-theme', nextTheme);
     try {
       localStorage.setItem('theme', nextTheme);
-    } catch (e) {}
+    } catch (e) { }
     window.setTimeout(() => {
       document.documentElement.classList.remove('theme-transitioning');
     }, 250);
@@ -62,7 +62,7 @@ export default function Header() {
       <div className={`container ${styles.inner}`}>
         {/* Logo / Name */}
         <a href="#home" className={styles.logo} aria-label="Edward Emmanuel - home">
-          <span className={styles.logoMark}>EE</span>
+          <span className={styles.logoMark}>HƎ</span>
           <span className={styles.logoName}>Edward Emmanuel</span>
         </a>
 
@@ -201,7 +201,7 @@ export default function Header() {
       >
         <div className={styles.drawerHeader}>
           <div className={styles.drawerBrand}>
-            <span className={styles.logoMark}>EE</span>
+            <span className={styles.logoMark}>HƎ</span>
             <span className={styles.drawerTitle}>Edward Emmanuel</span>
           </div>
           <div className={styles.drawerHeaderActions}>

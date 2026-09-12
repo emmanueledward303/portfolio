@@ -15,7 +15,7 @@ export default function Footer() {
         {/* Left */}
         <div className={styles.footerLeft}>
           <a href="#home" className={styles.footerBrand} aria-label="Edward Emmanuel - back to top">
-            <span className={styles.logoMark}>EE</span>
+            <span className={styles.logoMark}>HƎ</span>
             <span className={styles.footerName}>Edward Emmanuel</span>
           </a>
           <span className={styles.footerRole}>Data Analyst &amp; Software Engineer</span>

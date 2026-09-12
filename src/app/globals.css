@@ -47,8 +47,8 @@
   --color-error-bg: #FCEBEB;
 
   /* Typography */
-  --font-heading: 'Merriweather', Georgia, serif;
-  --font-body: 'Source Sans 3', system-ui, sans-serif;
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
 
   /* Type scale */
   --text-xs: 0.75rem;
@@ -87,6 +87,9 @@
   /* Transitions — motion-safe values */
   --transition-fast: 120ms ease;
   --transition-base: 200ms ease;
+
+  /* Header height — used to offset fixed header */
+  --header-height: 58px;
 }
 
 /* -------------------------------------------------------------------------
@@ -247,6 +250,11 @@ button {
   max-width: var(--container-max);
   margin-inline: auto;
   padding-inline: var(--container-px);
+}
+
+/* Offset fixed header so no content is hidden beneath it */
+#main-content {
+  padding-top: var(--header-height);
 }
 
 /* -------------------------------------------------------------------------
