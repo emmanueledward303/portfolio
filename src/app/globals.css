@@ -10,45 +10,45 @@
    CSS Custom Properties (Design Tokens)
    ------------------------------------------------------------------------- */
 :root {
-  /* Exact Theme Palette: Charcoal (#2A2529) & Pale Ivory (#F3F0E7) */
-  --color-paper: #F3F0E7;
-  /* Pale Ivory — primary canvas & page background */
-  --color-cream: #E9E5DA;
-  /* Soft Pale Ivory for alternating sections, cards & elevated containers */
-  --color-stone: #D8D3C5;
-  /* Warm stone for dividers, subtle borders, card frames */
-  --color-brown: #2A2529;
-  /* Charcoal — primary interactive color, logo mark, solid buttons */
-  --color-brown-dark: #1A1619;
-  /* Obsidian Charcoal for active/hover states & dark band backgrounds */
-  --color-black: #2A2529;
-  /* Charcoal — titles, primary headings, branding */
-  --color-ink: #2A2529;
-  /* Deep Charcoal for rich, readable body copy */
-  --color-muted: #645E63;
-  /* Slate Charcoal — subtitles, captions, metadata (WCAG AA 5.4:1 contrast on Pale Ivory) */
+  /* Theme Palette: Modern Warm Zinc & Pure Surface */
+  --color-paper: #F4F4F6;
+  /* Clean neutral zinc canvas — eliminates yellow/khaki tint */
+  --color-cream: #FFFFFF;
+  /* Pure White surface for cards, elevated containers & modals */
+  --color-stone: #E4E4E7;
+  /* Crisp neutral zinc border & divider (zinc-200) */
+  --color-brown: #18181B;
+  /* Deep Charcoal Zinc — primary interactive color, logo mark, solid buttons */
+  --color-brown-dark: #09090B;
+  /* Obsidian for active/hover states & dark band backgrounds */
+  --color-black: #09090B;
+  /* Deep black-zinc for headings & titles */
+  --color-ink: #27272A;
+  /* Zinc-800 for rich, readable body copy */
+  --color-muted: #71717A;
+  /* Zinc-500 — subtitles, captions, metadata */
 
   /* Complementary Palette Accents */
-  --color-accent: #B67343;
-  /* Warm Cognac / Terracotta Gold accent for badges, stars, highlights */
-  --color-accent-hover: #9E5F32;
-  --color-accent-light: #F7EFE8;
-  --color-accent-border: #E8D3C3;
+  --color-accent: #C26124;
+  /* Warm Cognac / Amber accent for badges, stars, highlights */
+  --color-accent-hover: #9E4915;
+  --color-accent-light: #FFF7ED;
+  --color-accent-border: #FED7AA;
 
   /* Status Colors */
-  --color-success: #235E3B;
+  --color-success: #15803D;
   /* Accessible Forest Green */
-  --color-success-bg: #EAF4EE;
-  --color-warning: #995D0B;
+  --color-success-bg: #F0FDF4;
+  --color-warning: #B45309;
   /* Warm Amber */
-  --color-warning-bg: #FEF6EB;
-  --color-error: #9E2B2B;
+  --color-warning-bg: #FFFBEB;
+  --color-error: #B91C1C;
   /* Deep Crimson */
-  --color-error-bg: #FCEBEB;
+  --color-error-bg: #FEF2F2;
 
   /* Typography */
-  --font-heading: 'Space Grotesk', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Syne', system-ui, -apple-system, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 
   /* Type scale */
   --text-xs: 0.75rem;
@@ -97,33 +97,33 @@
    Charcoal / Obsidian palette with crisp Pale Ivory typography
    ------------------------------------------------------------------------- */
 [data-theme="dark"] {
-  /* Obsidian / Charcoal canvas & containers */
-  --color-paper: #141214;
-  --color-cream: #1D1A1E;
-  --color-stone: #2F2A30;
+  /* Modern Zinc Obsidian palette */
+  --color-paper: #09090B;
+  --color-cream: #141417;
+  --color-stone: #27272A;
 
   /* Inverted button background / interactive accents */
-  --color-brown: #EFECE4;
-  --color-brown-dark: #FAF8F4;
+  --color-brown: #FAFAFA;
+  --color-brown-dark: #FFFFFF;
 
-  /* Clean bright ivory headings & body */
-  --color-black: #F8F5EE;
-  --color-ink: #DDD8CE;
-  --color-muted: #A09890;
+  /* Clean bright white headings & body */
+  --color-black: #FAFAFA;
+  --color-ink: #E4E4E7;
+  --color-muted: #A1A1AA;
 
   /* Accent colors tuned for dark mode */
-  --color-accent: #DFA06F;
-  --color-accent-hover: #EBB68C;
-  --color-accent-light: #2B201A;
-  --color-accent-border: #4D3A2C;
+  --color-accent: #E07A38;
+  --color-accent-hover: #F29352;
+  --color-accent-light: #2A180E;
+  --color-accent-border: #4D2B16;
 
   /* Status Colors */
-  --color-success: #52B77A;
-  --color-success-bg: #152A1D;
-  --color-warning: #E5A74E;
-  --color-warning-bg: #2C2010;
-  --color-error: #E87070;
-  --color-error-bg: #2D1414;
+  --color-success: #4ADE80;
+  --color-success-bg: #0E2A18;
+  --color-warning: #FBBF24;
+  --color-warning-bg: #2B1E06;
+  --color-error: #F87171;
+  --color-error-bg: #2B1212;
 }
 
 /* -------------------------------------------------------------------------
@@ -175,13 +175,12 @@ body {
   line-height: 1.65;
   color: var(--color-ink);
   background-color: var(--color-paper);
-  /* ── Subtle analytics doodle pattern ────────────────────────────────────
-     SVG hand-drawn icons (bar chart, pie, lightbulb, laptop, pen, arrow)
-     tiled at 4% opacity — sophisticated texture, never distracting.
+  /* ── Modern subtle dot grid texture ───────────────────────────────────
+     Clean, high-precision dot grid — subtle, crisp and digital.
      ----------------------------------------------------------------------- */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cg fill='none' stroke='%232A2529' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' opacity='0.04'%3E%3C!-- Bar chart top-left --%3E%3Crect x='18' y='52' width='10' height='28' rx='1'/%3E%3Crect x='32' y='40' width='10' height='40' rx='1'/%3E%3Crect x='46' y='58' width='10' height='22' rx='1'/%3E%3Cline x1='14' y1='80' x2='62' y2='80'/%3E%3C!-- Lightbulb top centre --%3E%3Ccircle cx='200' cy='30' r='12'/%3E%3Cpath d='M194 42 h12 M196 46 h8 M198 50 h4'/%3E%3Cline x1='200' y1='16' x2='200' y2='12'/%3E%3Cline x1='212' y1='20' x2='215' y2='17'/%3E%3Cline x1='188' y1='20' x2='185' y2='17'/%3E%3C!-- Laptop top-right --%3E%3Crect x='340' y='22' width='58' height='36' rx='3'/%3E%3Cpath d='M334 58 h70 M344 60 a4 4 0 0 0 4 4 h44 a4 4 0 0 0 4-4'/%3E%3Cline x1='355' y1='35' x2='375' y2='35'/%3E%3Cline x1='355' y1='41' x2='383' y2='41'/%3E%3C!-- Trending arrow mid-left --%3E%3Cpolyline points='18,200 42,178 66,188 90,160'/%3E%3Cpolyline points='82,156 90,160 86,168'/%3E%3C!-- Pie chart centre --%3E%3Ccircle cx='210' cy='210' r='30'/%3E%3Cpath d='M210 210 L210 180'/%3E%3Cpath d='M210 210 L234 225'/%3E%3Cpath d='M210 210 L186 228'/%3E%3C!-- Pen / pencil mid-right --%3E%3Crect x='356' y='168' width='10' height='46' rx='2' transform='rotate(-35 356 168)'/%3E%3Cpath d='M350 210 l-4 12 l10-6 z' transform='rotate(-35 350 210)'/%3E%3C!-- Dollar / data label bottom-left --%3E%3Ccircle cx='38' cy='340' r='20'/%3E%3Ctext x='31' y='347' font-size='18' stroke-width='1' font-family='serif'%3E%24%3C/text%3E%3C!-- Bar chart bottom-right --%3E%3Crect x='340' y='340' width='10' height='36' rx='1'/%3E%3Crect x='354' y='322' width='10' height='54' rx='1'/%3E%3Crect x='368' y='350' width='10' height='26' rx='1'/%3E%3Cline x1='336' y1='376' x2='384' y2='376'/%3E%3C!-- Ruler bottom-centre --%3E%3Crect x='160' y='370' width='100' height='20' rx='2'/%3E%3Cline x1='172' y1='370' x2='172' y2='380'/%3E%3Cline x1='184' y1='370' x2='184' y2='376'/%3E%3Cline x1='196' y1='370' x2='196' y2='380'/%3E%3Cline x1='208' y1='370' x2='208' y2='376'/%3E%3Cline x1='220' y1='370' x2='220' y2='380'/%3E%3Cline x1='232' y1='370' x2='232' y2='376'/%3E%3Cline x1='244' y1='370' x2='244' y2='380'/%3E%3C!-- Small envelope mid-top --%3E%3Crect x='100' y='18' width='44' height='30' rx='2'/%3E%3Cpath d='M100 18 l22 18 l22-18'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: radial-gradient(rgba(24, 24, 27, 0.07) 1px, transparent 1px);
   background-repeat: repeat;
-  background-size: 420px 420px;
+  background-size: 24px 24px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -190,7 +189,7 @@ body {
 }
 
 [data-theme="dark"] body {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cg fill='none' stroke='%23FFFFFF' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round' opacity='0.045'%3E%3C!-- Bar chart top-left --%3E%3Crect x='18' y='52' width='10' height='28' rx='1'/%3E%3Crect x='32' y='40' width='10' height='40' rx='1'/%3E%3Crect x='46' y='58' width='10' height='22' rx='1'/%3E%3Cline x1='14' y1='80' x2='62' y2='80'/%3E%3C!-- Lightbulb top centre --%3E%3Ccircle cx='200' cy='30' r='12'/%3E%3Cpath d='M194 42 h12 M196 46 h8 M198 50 h4'/%3E%3Cline x1='200' y1='16' x2='200' y2='12'/%3E%3Cline x1='212' y1='20' x2='215' y2='17'/%3E%3Cline x1='188' y1='20' x2='185' y2='17'/%3E%3C!-- Laptop top-right --%3E%3Crect x='340' y='22' width='58' height='36' rx='3'/%3E%3Cpath d='M334 58 h70 M344 60 a4 4 0 0 0 4 4 h44 a4 4 0 0 0 4-4'/%3E%3Cline x1='355' y1='35' x2='375' y2='35'/%3E%3Cline x1='355' y1='41' x2='383' y2='41'/%3E%3C!-- Trending arrow mid-left --%3E%3Cpolyline points='18,200 42,178 66,188 90,160'/%3E%3Cpolyline points='82,156 90,160 86,168'/%3E%3C!-- Pie chart centre --%3E%3Ccircle cx='210' cy='210' r='30'/%3E%3Cpath d='M210 210 L210 180'/%3E%3Cpath d='M210 210 L234 225'/%3E%3Cpath d='M210 210 L186 228'/%3E%3C!-- Pen / pencil mid-right --%3E%3Crect x='356' y='168' width='10' height='46' rx='2' transform='rotate(-35 356 168)'/%3E%3Cpath d='M350 210 l-4 12 l10-6 z' transform='rotate(-35 350 210)'/%3E%3C!-- Dollar / data label bottom-left --%3E%3Ccircle cx='38' cy='340' r='20'/%3E%3Ctext x='31' y='347' font-size='18' stroke-width='1' font-family='serif'%3E%24%3C/text%3E%3C!-- Bar chart bottom-right --%3E%3Crect x='340' y='340' width='10' height='36' rx='1'/%3E%3Crect x='354' y='322' width='10' height='54' rx='1'/%3E%3Crect x='368' y='350' width='10' height='26' rx='1'/%3E%3Cline x1='336' y1='376' x2='384' y2='376'/%3E%3C!-- Ruler bottom-centre --%3E%3Crect x='160' y='370' width='100' height='20' rx='2'/%3E%3Cline x1='172' y1='370' x2='172' y2='380'/%3E%3Cline x1='184' y1='370' x2='184' y2='376'/%3E%3Cline x1='196' y1='370' x2='196' y2='380'/%3E%3Cline x1='208' y1='370' x2='208' y2='376'/%3E%3Cline x1='220' y1='370' x2='220' y2='380'/%3E%3Cline x1='232' y1='370' x2='232' y2='376'/%3E%3Cline x1='244' y1='370' x2='244' y2='380'/%3E%3C!-- Small envelope mid-top --%3E%3Crect x='100' y='18' width='44' height='30' rx='2'/%3E%3Cpath d='M100 18 l22 18 l22-18'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
 }
 
 img,

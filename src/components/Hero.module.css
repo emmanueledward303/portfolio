@@ -24,7 +24,8 @@
 .name {
   font-family: var(--font-heading);
   font-size: clamp(2.8rem, 6vw, var(--text-4xl));
-  font-weight: 400;
+  font-weight: 700;
+  letter-spacing: -0.025em;
   line-height: 1.08;
   color: var(--color-black);
   margin-bottom: 20px;
@@ -71,9 +72,9 @@
   height: 380px;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 3px solid var(--color-brown);
-  box-shadow: 0 14px 32px rgba(42, 37, 41, 0.20);
-  background-color: var(--color-paper);
+  border: 2px solid var(--color-stone);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.10);
+  background-color: var(--color-cream);
 }
 
 .portraitImg {
